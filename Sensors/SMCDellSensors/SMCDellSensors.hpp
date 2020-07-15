@@ -41,11 +41,11 @@ class EXPORT SMCDellSensors : public IOService {
 	static constexpr SMC_KEY KeyFNum = SMC_MAKE_IDENTIFIER('F','N','u','m');
 	static constexpr SMC_KEY KeyF0ID(size_t i) { return SMC_MAKE_IDENTIFIER('F',KeyIndexes[i],'I','D'); }
 	static constexpr SMC_KEY KeyF0Ac(size_t i) { return SMC_MAKE_IDENTIFIER('F',KeyIndexes[i],'A','c'); }
-	//static constexpr SMC_KEY KeyF0As(size_t i) { return SMC_MAKE_IDENTIFIER('F',KeyIndexes[i],'A','s'); }
 	static constexpr SMC_KEY KeyF0Mn(size_t i) { return SMC_MAKE_IDENTIFIER('F',KeyIndexes[i],'M','n'); }
 	static constexpr SMC_KEY KeyF0Mx(size_t i) { return SMC_MAKE_IDENTIFIER('F',KeyIndexes[i],'M','x'); }
 	static constexpr SMC_KEY KeyF0Md(size_t i) { return SMC_MAKE_IDENTIFIER('F',KeyIndexes[i],'M','d'); }
 	static constexpr SMC_KEY KeyF0Tg(size_t i) { return SMC_MAKE_IDENTIFIER('F',KeyIndexes[i],'T','g'); }
+	// the following constant defines smc key 'FS! '
 	static constexpr SMC_KEY KeyFS__ = SMC_MAKE_IDENTIFIER('F','S','!',' ');
 	
 	static constexpr SMC_KEY KeyTC0P(size_t i) { return SMC_MAKE_IDENTIFIER('T','C',KeyIndexes[i],'P'); }
@@ -67,6 +67,23 @@ class EXPORT SMCDellSensors : public IOService {
 		xStringify(PRODUCT_NAME),
 		parseModuleVersion(xStringify(MODULE_VERSION)),
 		VirtualSMCAPI::Version,
+	};
+	
+	/**
+	 *  Power state name indexes
+	 */
+	enum PowerState {
+		PowerStateOff,
+		PowerStateOn,
+		PowerStateMax
+	};
+
+	/**
+	 *  Power states we monitor
+	 */
+	IOPMPowerState powerStates[PowerStateMax]  {
+		{kIOPMPowerStateVersion1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{kIOPMPowerStateVersion1, kIOPMPowerOn | kIOPMDeviceUsable, kIOPMPowerOn, kIOPMPowerOn, 0, 0, 0, 0, 0, 0, 0, 0}
 	};
 
 public:
@@ -105,6 +122,15 @@ public:
 	 *  @param provider  parent IOService object
 	 */
 	void stop(IOService *provider) override;
+	
+	/**
+	 *  Update power state with the new one, here we catch sleep/wake/boot/shutdown calls
+	 *  New power state could be the reason for keystore to be saved to NVRAM, for example
+	 *
+	 *  @param state      power state index (must be below PowerStateMax)
+	 *  @param whatDevice power state device
+	 */
+	IOReturn setPowerState(unsigned long state, IOService *whatDevice) override;
 	
 	/**
 	 *  Submit the keys to received VirtualSMC service.

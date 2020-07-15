@@ -45,14 +45,13 @@ IOService *SMCDellSensors::probe(IOService *provider, SInt32 *score) {
 	
 	for (size_t i = 0; i < fanCount; i++) {
 		VirtualSMCAPI::addKey(KeyF0Ac(i), vsmcPlugin.data, VirtualSMCAPI::valueWithFp(0, SmcKeyTypeFpe2, new F0Ac(i), SMC_KEY_ATTRIBUTE_WRITE | SMC_KEY_ATTRIBUTE_READ));
-		//VirtualSMCAPI::addKey(KeyF0As(i), vsmcPlugin.data, VirtualSMCAPI::valueWithUint8(0, new F0As(i), SMC_KEY_ATTRIBUTE_WRITE | SMC_KEY_ATTRIBUTE_READ));
-		VirtualSMCAPI::addKey(KeyF0Mn(i), vsmcPlugin.data, VirtualSMCAPI::valueWithFp(0, SmcKeyTypeFpe2, new F0Mn(i), SMC_KEY_ATTRIBUTE_CONST | SMC_KEY_ATTRIBUTE_READ));
-		VirtualSMCAPI::addKey(KeyF0Mx(i), vsmcPlugin.data, VirtualSMCAPI::valueWithFp(0, SmcKeyTypeFpe2, new F0Mx(i), SMC_KEY_ATTRIBUTE_CONST | SMC_KEY_ATTRIBUTE_READ));
+		VirtualSMCAPI::addKey(KeyF0Mn(i), vsmcPlugin.data, VirtualSMCAPI::valueWithFp(0, SmcKeyTypeFpe2, new F0Mn(i), SMC_KEY_ATTRIBUTE_WRITE | SMC_KEY_ATTRIBUTE_READ));
+		VirtualSMCAPI::addKey(KeyF0Mx(i), vsmcPlugin.data, VirtualSMCAPI::valueWithFp(0, SmcKeyTypeFpe2, new F0Mx(i), SMC_KEY_ATTRIBUTE_WRITE | SMC_KEY_ATTRIBUTE_READ));
 		VirtualSMCAPI::addKey(KeyF0Md(i), vsmcPlugin.data, VirtualSMCAPI::valueWithUint8(0, new F0Md(i), SMC_KEY_ATTRIBUTE_WRITE | SMC_KEY_ATTRIBUTE_READ));
 		VirtualSMCAPI::addKey(KeyF0Tg(i), vsmcPlugin.data, VirtualSMCAPI::valueWithFp(0, SmcKeyTypeFpe2, new F0Tg(i), SMC_KEY_ATTRIBUTE_WRITE | SMC_KEY_ATTRIBUTE_READ));
 	}
 	VirtualSMCAPI::addKey(KeyFS__, vsmcPlugin.data,
-		VirtualSMCAPI::valueWithUint16(0, new FForce(), SMC_KEY_ATTRIBUTE_WRITE | SMC_KEY_ATTRIBUTE_READ));
+		VirtualSMCAPI::valueWithUint16(0, new FS__(), SMC_KEY_ATTRIBUTE_WRITE | SMC_KEY_ATTRIBUTE_READ));
 
 	OSArray* fanNames = OSDynamicCast(OSArray, getProperty("FanNames"));
 	char fan_name[DiagFunctionStrLen];
@@ -129,6 +128,10 @@ bool SMCDellSensors::start(IOService *provider) {
 	
 	SMIMonitor::getShared()->start();
 	
+	PMinit();
+	provider->joinPMtree(this);
+	registerPowerDriver(this, powerStates, arrsize(powerStates));
+	
 	vsmcNotifier = VirtualSMCAPI::registerHandler(vsmcNotificationHandler, this);
 	return vsmcNotifier != nullptr;
 }
@@ -154,6 +157,17 @@ bool SMCDellSensors::vsmcNotificationHandler(void *sensors, void *refCon, IOServ
 
 void SMCDellSensors::stop(IOService *provider) {
 	PANIC("sdell", "called stop!!!");
+}
+
+IOReturn SMCDellSensors::setPowerState(unsigned long state, IOService *whatDevice){
+	DBGLOG("sdell", "changing power state to %lu", state);
+
+	if (state == PowerStateOff)
+		SMIMonitor::getShared()->handlePowerOff();
+	else if (state == PowerStateOn)
+		SMIMonitor::getShared()->handlePowerOn();
+
+	return kIOPMAckImplied;
 }
 
 EXPORT extern "C" kern_return_t ADDPR(kern_start)(kmod_info_t *, void *) {
