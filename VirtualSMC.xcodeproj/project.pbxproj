@@ -446,7 +446,6 @@
 		F681569D2496B624007C21AD /* SMIMonitor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SMIMonitor.cpp; sourceTree = "<group>"; };
 		F68156A02498FD28007C21AD /* SMIState.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SMIState.hpp; sourceTree = "<group>"; };
 		F6E45D7828F7FC2000B832AF /* WMIDellSensors.kext */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WMIDellSensors.kext; sourceTree = BUILT_PRODUCTS_DIR; };
-		F6E45D7928F7FC2000B832AF /* SMCDellSensors copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "SMCDellSensors copy-Info.plist"; path = "/Users/serglvs1974/src/VirtualSMC_lvs1974/SMCDellSensors copy-Info.plist"; sourceTree = "<absolute>"; };
 		F6E45D8028F7FC5C00B832AF /* KeyImplementations.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = KeyImplementations.hpp; sourceTree = "<group>"; };
 		F6E45D8128F7FC5C00B832AF /* SMIMonitor.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SMIMonitor.hpp; sourceTree = "<group>"; };
 		F6E45D8228F7FC5C00B832AF /* WMIDellSensors.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMIDellSensors.cpp; sourceTree = "<group>"; };
@@ -576,7 +575,6 @@
 				CE405EC81E49DD7B00AA0B3D /* SDK */,
 				CE09E8C71FFD20F90010A9CA /* Frameworks */,
 				1C748C281C21952C0024EED2 /* Products */,
-				F6E45D7928F7FC2000B832AF /* SMCDellSensors copy-Info.plist */,
 			);
 			sourceTree = "<group>";
 			usesTabs = 1;

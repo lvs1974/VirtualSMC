@@ -16,6 +16,8 @@
 #include <IOKit/acpi/IOACPIPlatformDevice.h>
 #include <mach/mach_types.h>
 
+using acpi_status = uint32_t;	/* All ACPI Exceptions */
+
 /*
  * If the GUID data block is marked as expensive, we must enable and
  * explicitily disable data collection.
@@ -27,6 +29,27 @@
 
 #define DELL_WMI_DESCRIPTOR_GUID 		"8D9DDCBC-A997-11DA-B012-B622A1EF5492"
 #define DELL_WMI_SMBIOS_GUID 			"A80593CE-A997-11DA-B012-B622A1EF5492"
+/*
+ * Exception code classes
+ */
+#define AE_CODE_ENVIRONMENTAL           0x0000	/* General ACPICA environment */
+#define AE_CODE_PROGRAMMER              0x1000	/* External ACPICA interface caller */
+#define AE_CODE_ACPI_TABLES             0x2000	/* ACPI tables */
+#define AE_CODE_AML                     0x3000	/* From executing AML code */
+#define AE_CODE_CONTROL                 0x4000	/* Internal control codes */
+
+#define AE_CODE_MAX                     0x4000
+#define AE_CODE_MASK                    0xF000
+
+#define EXCEP_ENV(code)                 ((acpi_status) (code | AE_CODE_ENVIRONMENTAL))
+#define AE_ERROR                        EXCEP_ENV (0x0001)
+/*
+ * Success is always zero, failure is non-zero
+ */
+#define ACPI_SUCCESS(a)                 (!(a))
+#define ACPI_FAILURE(a)                 (a)
+
+#define AE_OK                           (acpi_status) 0x0000
 
 #define UUID_SIZE 16
 
@@ -69,8 +92,6 @@ struct PACKED dell_wmi_smbios_buffer {
 	struct dell_wmi_extensions ext;
 };
 
-
-
 static_assert((sizeof(dell_wmi_smbios_buffer) - 8) == 44,  "Invalid dell_wmi_smbios_buffer size, must be 41");
 
 
@@ -85,6 +106,7 @@ private:
 	~WMIDellDevice();
 
 	static bool parse_wdg(IOACPIPlatformDevice* device);
+	static bool dell_wmi_descriptor_probe(IOACPIPlatformDevice* device, const guid_block *gblock);
 	static const struct guid_block* find_guid(const uid_arr &guid);
 
 	
@@ -93,10 +115,10 @@ private:
 	const guid_block	   *m_gblock {nullptr};
 	dell_wmi_smbios_buffer *m_buffer {nullptr};
 	
-	static constexpr const char *PnpDeviceIdAMW = "PNP0C14";
-	static constexpr const size_t buffer_size = 32*1024;
-	static constexpr const size_t max_guids {200};
-	static evector<guid_block&> guid_list;
+	static constexpr const char*	PnpDeviceIdAMW = "PNP0C14";
+	static constexpr const size_t 	max_guids {200};
+	static evector<guid_block&> 	guid_list;
+	static size_t   				buffer_size;
 };
 
 #endif /* WMIDellDevice_hpp */
