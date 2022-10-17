@@ -19,7 +19,7 @@ struct FanInfo {
 	static constexpr int32_t ValueUnknown = -1;
 	
 	// GET_TEMP_TYPE result codes
-	enum SMMFanType {
+	enum FanType {
 		Unsupported = ValueUnknown,
 		CPU		= 0,
 		System,
@@ -32,12 +32,14 @@ struct FanInfo {
 	
 	atomic_int		index   	 = ValueUnknown;
 	atomic_int		status  	 = ValueUnknown;
-	_Atomic(SMMFanType)	type   	 = Unsupported;
+	_Atomic(FanType)type    	 = Unsupported;
 	atomic_int		stopOffset	 = 0;
 	atomic_int		minSpeed	 = ValueUnknown;
 	atomic_int		maxSpeed	 = ValueUnknown;
 	atomic_int		targetSpeed  = 0;
 	atomic_int		speed   	 = 0;
+	atomic_uint     wmi_addr     = 0;
+	atomic_bool     smm          = true;
 };
 
 /**

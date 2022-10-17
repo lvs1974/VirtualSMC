@@ -2,8 +2,8 @@
 //  WMIDellDevice.hpp
 //  WMIDellSensors
 //
-//  Created by Sergey Lvov on 13/10/2022.
-//  Copyright © 2022 vit9696. All rights reserved.
+//  Created by lvs1974 on 13/10/2022.
+//  Copyright © 2022 lvs1974. All rights reserved.
 //
 
 #ifndef WMIDellDevice_hpp
@@ -69,6 +69,11 @@ struct PACKED guid_block
 	uint8_t flags;
 };
 
+struct wrapped_guid_block : public guid_block
+{
+	IOACPIPlatformDevice* device;
+};
+
 using int_array = uint32_t[4];
 
 
@@ -102,23 +107,23 @@ public:
 	bool evaluate(uint16_t smi_class, uint16_t select, const int_array args, int_array &res);
 	
 private:
-	WMIDellDevice(IOACPIPlatformDevice* device, const guid_block *gblock);
+	WMIDellDevice(const wrapped_guid_block *gblock);
 	~WMIDellDevice();
 
 	static bool parse_wdg(IOACPIPlatformDevice* device);
-	static bool dell_wmi_descriptor_probe(IOACPIPlatformDevice* device, const guid_block *gblock);
-	static const struct guid_block* find_guid(const uid_arr &guid);
+	static bool dell_wmi_descriptor_probe(const wrapped_guid_block *gblock);
+	static const struct wrapped_guid_block* find_guid(const uid_arr &guid);
 
 	
 private:
-	IOACPIPlatformDevice   *m_device {nullptr};
-	const guid_block	   *m_gblock {nullptr};
-	dell_wmi_smbios_buffer *m_buffer {nullptr};
+	IOACPIPlatformDevice     *m_device {nullptr};
+	const wrapped_guid_block *m_gblock {nullptr};
+	dell_wmi_smbios_buffer   *m_buffer {nullptr};
 	
-	static constexpr const char*	PnpDeviceIdAMW = "PNP0C14";
-	static constexpr const size_t 	max_guids {200};
-	static evector<guid_block&> 	guid_list;
-	static size_t   				buffer_size;
+	static constexpr const char*		PnpDeviceIdAMW = "PNP0C14";
+	static constexpr const size_t 		max_guids {200};
+	static evector<wrapped_guid_block&> guid_list;
+	static size_t   					buffer_size;
 };
 
 #endif /* WMIDellDevice_hpp */

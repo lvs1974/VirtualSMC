@@ -39,6 +39,13 @@ IOService *WMIDellSensors::probe(IOService *provider, SInt32 *score) {
 		return nullptr;
 	}
 
+	wmiDevice = WMIDellDevice::probe();
+	if (wmiDevice == nullptr) {
+		SYSLOG("sdell", "WMIDellDevice could not be created.");
+		return nullptr;
+	}
+
+	
 	if (!SMIMonitor::getShared()->probe())
 		return nullptr;
 
@@ -62,7 +69,7 @@ IOService *WMIDellSensors::probe(IOService *provider, SInt32 *score) {
 
 	for (unsigned int i = 0, cpu = 0; i < fanCount; i++) {
 		FanTypeDescStruct	desc;
-		FanInfo::SMMFanType type = SMIMonitor::getShared()->state.fanInfo[i].type;
+		FanInfo::FanType type = SMIMonitor::getShared()->state.fanInfo[i].type;
 		if (type == FanInfo::Unsupported) {
 			auto auto_type = (cpu++ == 0) ? FanInfo::CPU : FanInfo::GPU;
 			DBGLOG("sdell", "Fan type %d is unknown, auto assign value %d", type, auto_type);

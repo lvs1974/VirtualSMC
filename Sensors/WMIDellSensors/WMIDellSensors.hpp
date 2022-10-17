@@ -22,6 +22,8 @@
 
 #include <Headers/kern_util.hpp>
 
+#include "WMIDellDevice.hpp"
+
 class EXPORT WMIDellSensors : public IOService {
 	OSDeclareDefaultStructors(WMIDellSensors)
 
@@ -154,6 +156,11 @@ public:
 	
 	IOWorkLoop *workLoop {};
 	IOTimerEventSource *eventTimer {};
+	
+	/**
+	 *  Pointer to WMI device
+	 */
+	WMIDellDevice *wmiDevice {nullptr};
 };
 
 #endif /* WMIDellSensors_hpp */

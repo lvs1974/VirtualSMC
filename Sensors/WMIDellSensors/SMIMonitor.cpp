@@ -175,14 +175,13 @@ int SMIMonitor::i8k_set_fan_control_manual() {
 	smm_pkg.cmd = I8K_SMM_IO_DISABLE_FAN_CTL2;
 	smm_pkg.data = 0;
 	int result1 = i8k_smm(&smm_pkg, true);
-	return result1;
 	
-//	smm_pkg = {};
-//	smm_pkg.cmd = I8K_SMM_IO_DISABLE_FAN_CTL2;
-//	smm_pkg.data = 0;
-//	int result2 = i8k_smm(&smm_pkg, true);
-//
-//	return (result1 >= 0) ? result1 : result2;
+	smm_pkg = {};
+	smm_pkg.cmd = I8K_SMM_IO_DISABLE_FAN_CTL2;
+	smm_pkg.data = 0;
+	int result2 = i8k_smm(&smm_pkg, true);
+
+	return (result1 >= 0) ? result1 : result2;
 }
 
 int SMIMonitor::i8k_set_fan_control_auto() {
@@ -192,14 +191,13 @@ int SMIMonitor::i8k_set_fan_control_auto() {
 	smm_pkg.cmd = I8K_SMM_IO_ENABLE_FAN_CTL2;
 	smm_pkg.data = 0;
 	int result1 = i8k_smm(&smm_pkg, true);
-	return result1;
 	
-//	smm_pkg = {};
-//	smm_pkg.cmd = I8K_SMM_IO_ENABLE_FAN_CTL2;
-//	smm_pkg.data = 0;
-//	int result2 =  i8k_smm(&smm_pkg, true);
-//
-//	return (result1 >= 0) ? result1 : result2;
+	smm_pkg = {};
+	smm_pkg.cmd = I8K_SMM_IO_ENABLE_FAN_CTL2;
+	smm_pkg.data = 0;
+	int result2 =  i8k_smm(&smm_pkg, true);
+
+	return (result1 >= 0) ? result1 : result2;
 }
 
 void SMIMonitor::createShared() {
@@ -225,6 +223,11 @@ void SMIMonitor::createShared() {
 bool SMIMonitor::probe() {
 
 	bool success = true;
+	wmiDevice = WMIDellDevice::probe();
+	if (wmiDevice == nullptr) {
+		SYSLOG("sdell", "WMIDellDevice could not be created.");
+		return false;
+	}
 
 	while (!updateCall) {
 		updateCall = thread_call_allocate(staticUpdateThreadEntry, this);
@@ -258,12 +261,6 @@ bool SMIMonitor::probe() {
 			updateCall = nullptr;
 		}
 	}
-	else
-	{
-		wmiDevice = WMIDellDevice::probe();
-		if (wmiDevice == nullptr)
-			SYSLOG("sdell", "WMIDellDevice could not be created.");
-	}	
 
 	return success;
 }
@@ -392,7 +389,47 @@ bool SMIMonitor::findFanSensors() {
 	fanCount = 0;
 
 	for (int i = 0; i < state.MaxFanSupported; i++) {
-		state.fanInfo[i] = {};
+		state.fanInfo[fanCount] = {};
+		
+		uint32_t addr = 0xF600 + i*0x10;
+		int_array args = {addr, 0, 0, 0}, res = {0, 0, 0, 0};
+		if (wmiDevice->evaluate(0, 0, args, res) && res[0] == 0)
+		{
+			state.fanInfo[fanCount].index = i;
+			state.fanInfo[fanCount].speed = res[1];
+			state.fanInfo[fanCount].status = 0;
+			state.fanInfo[fanCount].minSpeed = 2200;
+			state.fanInfo[fanCount].maxSpeed = 4900;
+			state.fanInfo[fanCount].wmi_addr = addr;
+			state.fanInfo[fanCount].smm = false;
+			DBGLOG("sdell", "WMI Fan %d has been detected (addr = 0x%04X, speed=%d, minSpeed=%d, maxSpeed=%d", i, addr,
+				   state.fanInfo[fanCount].speed, state.fanInfo[fanCount].minSpeed, state.fanInfo[fanCount].maxSpeed);
+			
+			int rc = i8k_get_fan_status(i);
+			if (rc < 0) {
+				IOSleep(100);
+				rc = i8k_get_fan_status(i);
+			}
+			if (rc >= 0) {
+				rc = i8k_get_fan_speed(i, true);
+				if (rc >= 0) {
+					state.fanInfo[fanCount].minSpeed = i8k_get_fan_nominal_speed(i, I8K_FAN_LOW);
+					state.fanInfo[fanCount].maxSpeed = i8k_get_fan_nominal_speed(i, I8K_FAN_HIGH);
+					state.fanInfo[fanCount].smm = true;
+					int type = i8k_get_fan_type(i);
+					if ((type > FanInfo::Unsupported) && (type < FanInfo::Last))
+					{
+						state.fanInfo[fanCount].type = static_cast<FanInfo::FanType>(type);
+					}
+				}
+			}
+			
+			fanCount++;
+		}
+	}
+
+	for (int i = fanCount; i < state.MaxFanSupported; i++) {
+		state.fanInfo[fanCount] = {};
 		int rc = i8k_get_fan_status(i);
 		if (rc < 0) {
 			IOSleep(100);
@@ -405,15 +442,19 @@ bool SMIMonitor::findFanSensors() {
 			state.fanInfo[fanCount].minSpeed = i8k_get_fan_nominal_speed(i, I8K_FAN_LOW);
 			state.fanInfo[fanCount].maxSpeed = i8k_get_fan_nominal_speed(i, I8K_FAN_HIGH);
 			rc = i8k_get_fan_speed(i, true);
-			if (rc >= 0)
-				state.fanInfo[i].speed = rc;
+			if (rc < 0)
+				continue;
+			
+			state.fanInfo[fanCount].smm = true;
+			state.fanInfo[fanCount].speed = rc;
 
 			int type = i8k_get_fan_type(i);
 			if ((type > FanInfo::Unsupported) && (type < FanInfo::Last))
 			{
-				state.fanInfo[fanCount].type = static_cast<FanInfo::SMMFanType>(type);
+				state.fanInfo[fanCount].type = static_cast<FanInfo::FanType>(type);
 			}
-			DBGLOG("sdell", "Fan %d has been detected, type=%d, status=%d, minSpeed=%d, maxSpeed=%d", i, type, rc, state.fanInfo[fanCount].minSpeed, state.fanInfo[fanCount].maxSpeed);
+			DBGLOG("sdell", "SMM Fan %d has been detected, type=%d, status=%d, speed=%d, minSpeed=%d, maxSpeed=%d", i, type,
+				   state.fanInfo[fanCount].status, state.fanInfo[fanCount].speed, state.fanInfo[fanCount].minSpeed, state.fanInfo[fanCount].maxSpeed);
 
 			fanCount++;
 		}
@@ -478,11 +519,9 @@ void SMIMonitor::staticUpdateThreadEntry(thread_call_param_t param0, thread_call
 		
 		if (!that->i8k_get_dell_signature()) {
 			SYSLOG("sdell", "Unable to get Dell SMM signature!");
-			success = false;
-			break;
 		}
-
-		if (!that->findFanSensors() /*|| !that->findTempSensors()*/) {
+		
+		if (!that->findFanSensors()) {
 			SYSLOG("sdell", "failed to find fans or temp sensors!");
 			success = false;
 			break;
@@ -508,14 +547,28 @@ void SMIMonitor::updateSensorsLoop() {
 		
 		bool force_access = (--force_update_counter >= 0);
 		
-		for (int i=0; i<fanCount-1 && awake; ++i)
+		for (int i=0; i<fanCount && awake; ++i)
 		{
-			int sensor = state.fanInfo[i].index;
-			int rc = i8k_get_fan_speed(sensor, force_access);
-			if (rc >= 0)
-				state.fanInfo[i].speed = rc;
-			else
-				DBGLOG("sdell", "SMM reading error %d for fan %d", rc, sensor);
+			if (state.fanInfo[i].wmi_addr != 0) {
+				int_array args = {state.fanInfo[i].wmi_addr,0,0,0}, res = {0,0,0,0};
+				if (wmiDevice->evaluate(0, 0, args, res))
+				{
+					if (res[0] != 0)
+						SYSLOG("sdell", "WMI interface returned error: %d", res[0]);
+					else
+						state.fanInfo[i].speed = res[1];
+				}
+				else
+					SYSLOG("sdell", "WMI evaluate has failed");
+			}
+			else {
+				int sensor = state.fanInfo[i].index;
+				int rc = i8k_get_fan_speed(sensor, force_access);
+				if (rc >= 0)
+					state.fanInfo[i].speed = rc;
+				else
+					DBGLOG("sdell", "SMM reading error %d for fan %d", rc, sensor);
+			}
 			handleSmcUpdatesInIdle(4);
 		}
 		
@@ -529,23 +582,8 @@ void SMIMonitor::updateSensorsLoop() {
 		//				DBGLOG("sdell", "SMM reading error %d for temp sensor %d", rc, sensor);
 		//			handleSmcUpdatesInIdle(4);
 		//		}
-		
-		if (wmiDevice != nullptr)
-		{
-			int_array args = {0xF600,0,0,0}, res = {0,0,0,0};
-			if (wmiDevice->evaluate(0, 0, args, res))
-			{
-				if (res[0] != 0)
-					SYSLOG("sdell", "WMI interface returned error: %d", res[0]);
-				else
-					state.fanInfo[1].speed = res[1];
-			}
-			else
-				SYSLOG("sdell", "WMI evaluate has failed");
-		}
-		
+				
 		handleSmcUpdatesInIdle(5);
-		
 	}
 }
 
@@ -611,6 +649,8 @@ void SMIMonitor::hanldeManualTargetSpeedUpdate(size_t index, UInt8 *data)
 {
 	auto value = VirtualSMCAPI::decodeIntFp(SmcKeyTypeFpe2, *reinterpret_cast<const uint16_t *>(data));
 	state.fanInfo[index].targetSpeed = value;
+	if (!state.fanInfo[index].smm)
+		return;
 
 	if (fansStatus & (1 << index)) {
 		int status = 1;

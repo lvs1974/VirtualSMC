@@ -2,15 +2,15 @@
 //  WMIDellDevice.cpp
 //  WMIDellSensors
 //
-//  Created by Sergey Lvov on 13/10/2022.
-//  Copyright © 2022 vit9696. All rights reserved.
+//  Created by lvs1974 on 13/10/2022.
+//  Copyright © 2022 lvs1974. All rights reserved.
 //
 
 #include "WMIDellDevice.hpp"
 
 
-evector<guid_block&> WMIDellDevice::guid_list;
-size_t   WMIDellDevice::buffer_size = 0;
+evector<wrapped_guid_block&> WMIDellDevice::guid_list;
+size_t WMIDellDevice::buffer_size = 0;
 
 //
 // Lame implementation just for use by strcasecmp/strncasecmp
@@ -55,8 +55,10 @@ WMIDellDevice* WMIDellDevice::probe()
 	uid_arr dell_wmi_smbios_guid, dell_wmi_desctiptor_guid;
 	guid_parse(DELL_WMI_SMBIOS_GUID, dell_wmi_smbios_guid);
 	guid_parse(DELL_WMI_DESCRIPTOR_GUID, dell_wmi_desctiptor_guid);
-	PANIC_COND(!guid_list.reserve(max_guids), "sdell", "evector::push_back has failed");
-	
+	if (guid_list.size() == 0) {
+		PANIC_COND(!guid_list.reserve(max_guids), "sdell", "evector::push_back has failed");
+	}
+		
 	if (iterator) {
 		while (auto entry = iterator->getNextObject()) {
 			if (entry->compareName(pnp)) {
@@ -64,49 +66,47 @@ WMIDellDevice* WMIDellDevice::probe()
 				if (device != nullptr) {
 					if (!parse_wdg(device))
 						continue;
-					if (buffer_size == 0) {
-						auto *gblock = find_guid(dell_wmi_desctiptor_guid);
-						if (gblock != nullptr)
-						{
-							if (!dell_wmi_descriptor_probe(device, gblock)) {
-								SYSLOG("sdell", "WMIDellDevice failed to retrieve wmi descriptor");
-								break;
-							}
-						}
-					}
-					if (result == nullptr && buffer_size != 0) {
-						auto *gblock = find_guid(dell_wmi_smbios_guid);
-						if (gblock != nullptr)
-						{
-							if (gblock->flags & ACPI_WMI_METHOD)
-							{
-								DBGLOG("sdell", "found ACPI PNP AMW %s", safeString(entry->getName()));
-								result = new WMIDellDevice(device, gblock);
-							}
-							else
-							{
-								SYSLOG("sdell", "WMIDellDevice failed to find correct DELL_WMI_SMBIOS_GUID");
-							}
-							break;
-						}
-					}
 				}
 			}
 		}
-		
-		if (result != nullptr && find_guid(dell_wmi_desctiptor_guid) == nullptr)
-			SYSLOG("sdell", "WMIDellDevice failed find DELL_WMI_DESCRIPTOR_GUID (%s)", DELL_WMI_DESCRIPTOR_GUID);
+
+		auto *gblock = find_guid(dell_wmi_desctiptor_guid);
+		if (gblock != nullptr)
+		{
+			if (buffer_size == 0 && !dell_wmi_descriptor_probe(gblock)) {
+				SYSLOG("sdell", "WMIDellDevice failed to retrieve wmi descriptor");
+			}
+			else if (buffer_size != 0) {
+				auto *gblock = find_guid(dell_wmi_smbios_guid);
+				if (gblock != nullptr)
+				{
+					if (gblock->flags & ACPI_WMI_METHOD)
+					{
+						DBGLOG("sdell", "found ACPI PNP %s", safeString(gblock->device->getName()));
+						result = new WMIDellDevice(gblock);
+					}
+					else
+					{
+						SYSLOG("sdell", "WMIDellDevice failed to find correct DELL_WMI_SMBIOS_GUID");
+					}
+				}
+				else
+					SYSLOG("sdell", "DELL_WMI_SMBIOS_GUID could not be found");
+			}
+		}
+		else
+			SYSLOG("sdell", "DELL_WMI_DESCRIPTOR_GUID could not be found");
 
 		iterator->release();
 	} else {
-		SYSLOG("sdell", "AMW find failed to iterate over acpi");
+		SYSLOG("sdell", "WMI device find failed to iterate over acpi");
 	}
 
 	pnp->release();
 	return result;
 }
 
-WMIDellDevice::WMIDellDevice(IOACPIPlatformDevice* device, const guid_block *gblock) : m_device(device), m_gblock(gblock)
+WMIDellDevice::WMIDellDevice(const wrapped_guid_block *gblock) : m_device(gblock->device), m_gblock(gblock)
 {
 	m_buffer = reinterpret_cast<dell_wmi_smbios_buffer*>(Buffer::create<uint8_t>(buffer_size));
 }
@@ -149,7 +149,7 @@ bool WMIDellDevice::evaluate(uint16_t smi_class, uint16_t select, const int_arra
 			out->release();
 		}
 	}
-	
+		
 	return result;
 }
 
@@ -176,8 +176,9 @@ bool WMIDellDevice::parse_wdg(IOACPIPlatformDevice* device)
 				{
 					if (find_guid(gblock[i].guid) != nullptr)
 						continue;
-					guid_block gb;
+					wrapped_guid_block gb;
 					memcpy(&gb, &gblock[i], sizeof(struct guid_block));
+					gb.device = device;
 					PANIC_COND(!guid_list.push_back(gb), "sdell", "evector::push_back has failed");
 				}
 			}
@@ -199,7 +200,7 @@ bool WMIDellDevice::parse_wdg(IOACPIPlatformDevice* device)
  * WMI buffer length        12       4    <length>
  * WMI hotfix number        16       4    <hotfix>
  */
-bool WMIDellDevice::dell_wmi_descriptor_probe(IOACPIPlatformDevice* device, const guid_block *gblock)
+bool WMIDellDevice::dell_wmi_descriptor_probe(const wrapped_guid_block *gblock)
 {
 	if (gblock->flags & (ACPI_WMI_EVENT | ACPI_WMI_METHOD)) {
 		SYSLOG("sdell", "dell_wmi_get_size: block DELL_WMI_DESCRIPTOR_GUID has wrong flags");
@@ -223,7 +224,7 @@ bool WMIDellDevice::dell_wmi_descriptor_probe(IOACPIPlatformDevice* device, cons
 		strncat(wc_method, gblock->object_id, 2);
 		OSObject *params[1];
 		params[0] = OSNumber::withNumber(static_cast<unsigned long long>(0), 1);
-		IOReturn ret = device->evaluateInteger(wc_method, &wc_status, params, 1);
+		IOReturn ret = gblock->device->evaluateInteger(wc_method, &wc_status, params, 1);
 		if (ret != kIOReturnSuccess) {
 			SYSLOG("sdell", "dell_wmi_get_size: evaluateInteger for method %s has failed with code 0x%x", wc_method, ret);
 			return false;
@@ -235,7 +236,7 @@ bool WMIDellDevice::dell_wmi_descriptor_probe(IOACPIPlatformDevice* device, cons
 	OSObject *out = nullptr;
 	OSObject *params[1];
 	params[0] = OSNumber::withNumber(static_cast<unsigned long long>(0), 0);
-	IOReturn ret = device->evaluateObject(method, &out, params, 1);
+	IOReturn ret = gblock->device->evaluateObject(method, &out, params, 1);
 	if (ret != kIOReturnSuccess) {
 		SYSLOG("sdell", "dell_wmi_get_size: evaluateObject %s has failed with code 0x%x", method, ret);
 	}
@@ -281,7 +282,7 @@ bool WMIDellDevice::dell_wmi_descriptor_probe(IOACPIPlatformDevice* device, cons
 	if ((gblock->flags & ACPI_WMI_EXPENSIVE) && ACPI_SUCCESS(wc_status)) {
 		OSObject *params[1];
 		params[0] = OSNumber::withNumber(static_cast<unsigned long long>(0), 0);
-		IOReturn ret = device->evaluateInteger(wc_method, &wc_status, params, 1);
+		IOReturn ret = gblock->device->evaluateInteger(wc_method, &wc_status, params, 1);
 		if (ret != kIOReturnSuccess) {
 			SYSLOG("sdell", "dell_wmi_get_size: evaluateInteger %s has failed with code 0x%x", wc_method, ret);
 		}
@@ -290,7 +291,7 @@ bool WMIDellDevice::dell_wmi_descriptor_probe(IOACPIPlatformDevice* device, cons
 	return result;
 }
 
-const struct guid_block* WMIDellDevice::find_guid(const uid_arr &guid)
+const struct wrapped_guid_block* WMIDellDevice::find_guid(const uid_arr &guid)
 {
 	for (size_t i = 0; i < guid_list.size(); i++) {
 		auto &gblock = guid_list[i];
