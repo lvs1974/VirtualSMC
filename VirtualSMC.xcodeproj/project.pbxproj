@@ -114,6 +114,9 @@
 		F6E45DA528F8016C00B832AF /* WMIDellDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F6E45DA328F8016C00B832AF /* WMIDellDevice.cpp */; };
 		F6E45DA628F8016C00B832AF /* WMIDellDevice.hpp in Headers */ = {isa = PBXBuildFile; fileRef = F6E45DA428F8016C00B832AF /* WMIDellDevice.hpp */; };
 		F6EFD52827B9806900CA8F29 /* bzh_dell_smm_lowlevel.S in Sources */ = {isa = PBXBuildFile; fileRef = F6EFD52727B97F1200CA8F29 /* bzh_dell_smm_lowlevel.S */; };
+		F6F312D128FEA2D800FC31AD /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = F6F312D028FEA2D800FC31AD /* main.mm */; };
+		F6F312D628FEA35E00FC31AD /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE09E8C81FFD20F90010A9CA /* IOKit.framework */; };
+		F6F312D828FEA36700FC31AD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6F312D728FEA36700FC31AD /* Foundation.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -276,6 +279,15 @@
 			runOnlyForDeploymentPostprocessing = 1;
 		};
 		CE3BD68F1F48BE1900A03466 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		F6F312CC28FEA2D700FC31AD /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = /usr/share/man/man1/;
@@ -461,6 +473,9 @@
 		F6E45DA328F8016C00B832AF /* WMIDellDevice.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WMIDellDevice.cpp; sourceTree = "<group>"; };
 		F6E45DA428F8016C00B832AF /* WMIDellDevice.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = WMIDellDevice.hpp; sourceTree = "<group>"; };
 		F6EFD52727B97F1200CA8F29 /* bzh_dell_smm_lowlevel.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = bzh_dell_smm_lowlevel.S; sourceTree = "<group>"; };
+		F6F312CE28FEA2D700FC31AD /* wmitool */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = wmitool; sourceTree = BUILT_PRODUCTS_DIR; };
+		F6F312D028FEA2D800FC31AD /* main.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
+		F6F312D728FEA36700FC31AD /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -563,6 +578,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F6F312CB28FEA2D700FC31AD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F6F312D828FEA36700FC31AD /* Foundation.framework in Frameworks */,
+				F6F312D628FEA35E00FC31AD /* IOKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -597,6 +621,7 @@
 				ABE841622378A1ED003B5FEF /* DeviceGenerator */,
 				F68156842496AFCF007C21AD /* SMCDellSensors.kext */,
 				F6E45D7828F7FC2000B832AF /* WMIDellSensors.kext */,
+				F6F312CE28FEA2D700FC31AD /* wmitool */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -751,6 +776,7 @@
 		CE09E8C71FFD20F90010A9CA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F6F312D728FEA36700FC31AD /* Foundation.framework */,
 				CE8D9F7E2517B58C008C44E8 /* libkmod.a */,
 				CE09E8C81FFD20F90010A9CA /* IOKit.framework */,
 			);
@@ -871,6 +897,7 @@
 		CEA5F65720B991BD008E6E8A /* Tools */ = {
 			isa = PBXGroup;
 			children = (
+				F6F312CF28FEA2D800FC31AD /* wmitool */,
 				35A795E321B0597F005F2F6C /* CoreOffset */,
 				CE335ADB2096738A00C60A5F /* rtcread */,
 				CE3BD6921F48BE1900A03466 /* smcread */,
@@ -931,6 +958,14 @@
 				F6A66EC228FE953400294715 /* wmi_defines.h */,
 			);
 			path = WMIDellSensors;
+			sourceTree = "<group>";
+		};
+		F6F312CF28FEA2D800FC31AD /* wmitool */ = {
+			isa = PBXGroup;
+			children = (
+				F6F312D028FEA2D800FC31AD /* main.mm */,
+			);
+			path = wmitool;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1292,6 +1327,23 @@
 			productReference = F6E45D7828F7FC2000B832AF /* WMIDellSensors.kext */;
 			productType = "com.apple.product-type.kernel-extension";
 		};
+		F6F312CD28FEA2D700FC31AD /* wmitool */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F6F312D528FEA2D800FC31AD /* Build configuration list for PBXNativeTarget "wmitool" */;
+			buildPhases = (
+				F6F312CA28FEA2D700FC31AD /* Sources */,
+				F6F312CB28FEA2D700FC31AD /* Frameworks */,
+				F6F312CC28FEA2D700FC31AD /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = wmitool;
+			productName = wmitool;
+			productReference = F6F312CE28FEA2D700FC31AD /* wmitool */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -1342,6 +1394,10 @@
 					CEA5F66420B9999C008E6E8A = {
 						ProvisioningStyle = Automatic;
 					};
+					F6F312CD28FEA2D700FC31AD = {
+						CreatedOnToolsVersion = 14.0.1;
+						ProvisioningStyle = Automatic;
+					};
 				};
 			};
 			buildConfigurationList = 1C748C211C21952C0024EED2 /* Build configuration list for PBXProject "VirtualSMC" */;
@@ -1371,6 +1427,7 @@
 				CEA5AAB62129AF3A0001F426 /* aistat */,
 				35A795E121B0597F005F2F6C /* CoreOffset */,
 				F6E45D6028F7FC2000B832AF /* WMIDellSensors */,
+				F6F312CD28FEA2D700FC31AD /* wmitool */,
 			);
 		};
 /* End PBXProject section */
@@ -1624,6 +1681,14 @@
 				F6E45DA528F8016C00B832AF /* WMIDellDevice.cpp in Sources */,
 				F6E45D9728F7FC5D00B832AF /* kern_start.cpp in Sources */,
 				F6E45D9828F7FC5D00B832AF /* KeyImplementations.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F6F312CA28FEA2D700FC31AD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F6F312D128FEA2D800FC31AD /* main.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3624,6 +3689,79 @@
 			};
 			name = Release;
 		};
+		F6F312D228FEA2D800FC31AD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				MACOSX_DEPLOYMENT_TARGET = 12.3;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WARNING_CFLAGS = "";
+			};
+			name = Debug;
+		};
+		F6F312D328FEA2D800FC31AD /* Sanitize */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				MACOSX_DEPLOYMENT_TARGET = 12.3;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WARNING_CFLAGS = "";
+			};
+			name = Sanitize;
+		};
+		F6F312D428FEA2D800FC31AD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				MACOSX_DEPLOYMENT_TARGET = 12.3;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WARNING_CFLAGS = "";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -3773,6 +3911,16 @@
 				F6E45D7528F7FC2000B832AF /* Debug */,
 				F6E45D7628F7FC2000B832AF /* Sanitize */,
 				F6E45D7728F7FC2000B832AF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F6F312D528FEA2D800FC31AD /* Build configuration list for PBXNativeTarget "wmitool" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F6F312D228FEA2D800FC31AD /* Debug */,
+				F6F312D328FEA2D800FC31AD /* Sanitize */,
+				F6F312D428FEA2D800FC31AD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
