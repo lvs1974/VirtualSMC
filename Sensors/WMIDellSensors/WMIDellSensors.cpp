@@ -44,7 +44,6 @@ IOService *WMIDellSensors::probe(IOService *provider, SInt32 *score) {
 		SYSLOG("sdell", "WMIDellDevice could not be created.");
 		return nullptr;
 	}
-
 	
 	if (!SMIMonitor::getShared()->probe())
 		return nullptr;
@@ -144,7 +143,7 @@ bool WMIDellSensors::start(IOService *provider) {
 	setProperty("VersionInfo", kextVersion);
 
 	notifier = registerSleepWakeInterest(IOSleepHandler, this);
-	if (notifier == NULL) {
+	if (notifier == nullptr) {
 		SYSLOG("sdell", "failed to register sleep/wake interest");
 		return false;
 	}
@@ -178,6 +177,7 @@ bool WMIDellSensors::start(IOService *provider) {
 	PMinit();
 	provider->joinPMtree(this);
 	registerPowerDriver(this, powerStates, arrsize(powerStates));
+	registerService();
 
 	vsmcNotifier = VirtualSMCAPI::registerHandler(vsmcNotificationHandler, this);
 	return vsmcNotifier != nullptr;
@@ -245,3 +245,257 @@ IOReturn WMIDellSensors::IOSleepHandler(void *target, void *, UInt32 messageType
 	return kIOReturnSuccess;
 }
 
+bool WMIDellSensors::evaluate(WMI_CLASS smi_class, WMI_SELECTOR select, const int_array args, int_array &res)
+{
+	return wmiDevice->evaluate(smi_class, select, args, res);
+}
+
+IOReturn WMIDellSensors::runAction(UInt32 action, UInt32 *outSize, void **outData, void *extraArg)
+{
+	return kIOReturnSuccess;
+}
+
+IOReturn WMIDellSensors::newUserClient(task_t owningTask, void * securityID, UInt32 type, IOUserClient ** handler )
+{
+	IOReturn ioReturn = kIOReturnSuccess;
+	WMIDellUserClient *client = nullptr;
+
+	if (mClientCount > MAXUSERS)
+	{
+		SYSLOG("sdell", "WMIDellSensors: Client already created, not delete");
+		return(kIOReturnError);
+	}
+	
+	client = (WMIDellUserClient *)WMIDellUserClient::withTask(owningTask);
+	if (client == nullptr) {
+		ioReturn = kIOReturnNoResources;
+		SYSLOG("sdell", "WMIDellSensors::newUserClient: Can't create user client");
+	}
+	
+	if (ioReturn == kIOReturnSuccess) {
+		// Start the client so it can accept requests.
+		client->attach(this);
+		if (client->start(this) == false) {
+			ioReturn = kIOReturnError;
+			SYSLOG("sdell", "VoltageShiftAnVMSR::newUserClient: Can't start user client");
+		}
+	}
+	
+	if (ioReturn != kIOReturnSuccess && client != nullptr) {
+		IOLog("WMIDellSensors: newUserClient error");
+		client->detach(this);
+		client->release();
+	} else {
+		mClientPtr[mClientCount] = client;
+		
+		*handler = client;
+		
+		client->set_Q_Size(type);
+		mClientCount++;
+	}
+	
+	DBGLOG("sdell", "WMIDellSensors: newUserClient() client = %p", mClientPtr[mClientCount]);
+	
+	return (ioReturn);
+}
+
+void WMIDellSensors::closeChild(WMIDellUserClient *ptr)
+{
+	UInt8 i, idx;
+	idx = 0;
+	
+	if (mClientCount == 0)
+	{
+		SYSLOG("sdell", "WMIDellSensors: No clients available to close");
+		return;
+	}
+	
+	DBGLOG("sdell", "WMIDellSensors: Closing: %p",ptr);
+	for(i=0; i<mClientCount; i++)
+	{
+		DBGLOG("sdell", "WMIDellSensors:userclient ref: %d %p", i, mClientPtr[i]);
+	}
+	
+	for(i=0; i<mClientCount; i++)
+	{
+		if (mClientPtr[i] == ptr)
+		{
+			mClientCount--;
+			mClientPtr[i] = nullptr;
+			idx = i;
+			i = mClientCount+1;
+		}
+	}
+	
+	for(i=idx; i<mClientCount; i++)
+	{
+		mClientPtr[i] = mClientPtr[i+1];
+	}
+	mClientPtr[mClientCount+1] = nullptr;
+}
+
+
+OSDefineMetaClassAndStructors(WMIDellUserClient, IOUserClient);
+
+const WMIDellUserClient *WMIDellUserClient::withTask(task_t owningTask)
+{
+	WMIDellUserClient *client;
+	
+	client = new WMIDellUserClient;
+	if (client != nullptr)
+	{
+		if (client->init() == false)
+		{
+			client->release();
+			client = nullptr;
+		}
+	}
+	if (client != nullptr)
+		client->fTask = owningTask;
+	return (client);
+}
+
+bool WMIDellUserClient::set_Q_Size(UInt32 capacity)
+{
+	if (capacity == 0)
+		return true;
+
+	DBGLOG("sdell", "WMIDellUserClient:  Reseting size of data queue, all data in queue is lost");
+
+	//Get mem for new queue of calcuated size
+	return true;
+}
+
+void WMIDellUserClient::free()
+{
+	DBGLOG("sdell", "WMIDellUserClient:  AnVMSRUserClient::free");
+	mDevice->release();
+	IOUserClient::free();
+}
+
+bool WMIDellUserClient::start(IOService *provider)
+{
+	DBGLOG("sdell", "WMIDellUserClient: starting with provider %s...", safeString(provider->getName()));
+	
+	if (!IOUserClient::start(provider))
+		return false;
+	
+	mDevice = OSDynamicCast(WMIDellSensors, provider);
+	mDevice->retain();
+	
+	return true;
+}
+
+void WMIDellUserClient::stop(IOService *provider)
+{
+	DBGLOG("sdell", "WMIDellUserClient: stop with provider %s...", safeString(provider->getName()));
+	IOUserClient::stop(provider);
+}
+
+bool WMIDellUserClient::initWithTask(task_t owningTask, void *securityID, UInt32 type, OSDictionary *properties)
+{
+	return IOUserClient::initWithTask(owningTask, securityID, type, properties);
+}
+
+// clientClose is called when the user process calls IOServiceClose
+IOReturn WMIDellUserClient::clientClose()
+{
+	if (mDevice != nullptr)
+		mDevice->closeChild(this);
+
+	if (!isInactive())
+		terminate();
+	
+	return kIOReturnSuccess;
+}
+
+// clientDied is called when the user process terminates unexpectedly, the default
+// implementation simply calls clientClose
+IOReturn WMIDellUserClient::clientDied()
+{
+	return clientClose();
+}
+
+bool WMIDellUserClient::willTerminate(IOService *provider, IOOptionBits options)
+{
+	DBGLOG("sdell", "WMIDellUserClient: willTerminate with provider %s...", safeString(provider->getName()));
+	return IOUserClient::willTerminate(provider, options);
+}
+
+bool WMIDellUserClient::didTerminate(IOService *provider, IOOptionBits options, bool *defer)
+{
+	DBGLOG("sdell", "WMIDellUserClient: didTerminate with provider %s...", safeString(provider->getName()));
+	
+	// if defer is true, stop will not be called on the user client
+	*defer = false;
+	
+	return IOUserClient::didTerminate(provider, options, defer);
+}
+
+bool WMIDellUserClient::terminate(IOOptionBits options)
+{
+	return IOUserClient::terminate(options);
+}
+
+// getTargetAndMethodForIndex looks up the external methods - supply a description of the parameters
+// available to be called
+IOExternalMethod *WMIDellUserClient::getTargetAndMethodForIndex(IOService **target, UInt32 index)
+{
+	static IOExternalMethod methodDescs[1] = {
+		{ nullptr, (IOMethod) &WMIDellUserClient::actionEvaluate, kIOUCStructIStructO,
+			kIOUCVariableStructureSize, kIOUCVariableStructureSize }
+	};
+	
+	*target = this;
+	if (index == 0)
+		return reinterpret_cast<IOExternalMethod *>(methodDescs);
+
+	return nullptr;
+}
+
+IOReturn WMIDellUserClient::clientMemoryForType(UInt32 type, IOOptionBits *options, IOMemoryDescriptor **memory)
+{
+	IOBufferMemoryDescriptor *memDesc;
+	char *msgBuffer;
+
+	*options = 0;
+	*memory = nullptr;
+	
+	memDesc = IOBufferMemoryDescriptor::withOptions(kIOMemoryKernelUserShared, mDevice->mPrefPanelMemoryBufSize);
+
+	if (!memDesc)
+	{
+		DBGLOG("sdell", "WMIDellUserClient: mempory could not be allocated in clientMemoryForType");
+		return kIOReturnUnsupported;
+	}
+
+	msgBuffer = (char *) memDesc->getBytesNoCopy();
+	bcopy(&mDevice->mPrefPanelMemoryBuf, msgBuffer, mDevice->mPrefPanelMemoryBufSize);
+	*memory = memDesc; // automatically released after memory is mapped into task
+
+	return kIOReturnSuccess;
+}
+
+IOReturn WMIDellUserClient::actionEvaluate(UInt32 *dataIn, UInt32 *dataOut, IOByteCount inputSize, IOByteCount *outputSize)
+{
+	calling_interface_buffer *indata  = reinterpret_cast<calling_interface_buffer*>(dataIn);
+	calling_interface_buffer *outdata = reinterpret_cast<calling_interface_buffer*>(dataOut);
+
+	DBGLOG("sdell", "WMIDellUserClient: actionEvaluate called");
+	
+	if (!dataIn) {
+		SYSLOG("sdell", "WMIDellUserClient:actionEvaluate called without dataIn");
+		return kIOReturnUnsupported;
+	}
+
+	if (!dataOut)
+	{
+		SYSLOG("sdell", "WMIDellUserClient:actionEvaluate called without dataOut");
+		return kIOReturnUnsupported;
+	}
+
+	if (!mDevice->evaluate(indata->cmd_class, indata->cmd_select, indata->input, outdata->output))
+		outdata->output[3] = kIOReturnUnsupported;
+
+	return kIOReturnSuccess;
+}

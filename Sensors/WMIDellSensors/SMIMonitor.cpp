@@ -391,9 +391,9 @@ bool SMIMonitor::findFanSensors() {
 	for (int i = 0; i < state.MaxFanSupported; i++) {
 		state.fanInfo[fanCount] = {};
 		
-		uint32_t addr = 0xF600 + i*0x10;
+		uint32_t addr = static_cast<uint32_t>(WMI_TOKEN::Fan1Rpm) + i*0x10;
 		int_array args = {addr, 0, 0, 0}, res = {0, 0, 0, 0};
-		if (wmiDevice->evaluate(0, 0, args, res) && res[0] == 0)
+		if (wmiDevice->evaluate(WMI_CLASS::TokenRead, WMI_SELECTOR::Standard, args, res) && res[0] == 0)
 		{
 			state.fanInfo[fanCount].index = i;
 			state.fanInfo[fanCount].speed = res[1];
@@ -551,7 +551,7 @@ void SMIMonitor::updateSensorsLoop() {
 		{
 			if (state.fanInfo[i].wmi_addr != 0) {
 				int_array args = {state.fanInfo[i].wmi_addr,0,0,0}, res = {0,0,0,0};
-				if (wmiDevice->evaluate(0, 0, args, res))
+				if (wmiDevice->evaluate(WMI_CLASS::TokenRead, WMI_SELECTOR::Standard, args, res))
 				{
 					if (res[0] != 0)
 						SYSLOG("sdell", "WMI interface returned error: %d", res[0]);

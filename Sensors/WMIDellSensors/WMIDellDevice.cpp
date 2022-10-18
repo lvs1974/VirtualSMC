@@ -9,7 +9,7 @@
 #include "WMIDellDevice.hpp"
 
 
-evector<wrapped_guid_block&> WMIDellDevice::guid_list;
+evector<extended_guid_block&> WMIDellDevice::guid_list;
 size_t WMIDellDevice::buffer_size = 0;
 
 //
@@ -106,7 +106,7 @@ WMIDellDevice* WMIDellDevice::probe()
 	return result;
 }
 
-WMIDellDevice::WMIDellDevice(const wrapped_guid_block *gblock) : m_device(gblock->device), m_gblock(gblock)
+WMIDellDevice::WMIDellDevice(const extended_guid_block *gblock) : m_device(gblock->device), m_gblock(gblock)
 {
 	m_buffer = reinterpret_cast<dell_wmi_smbios_buffer*>(Buffer::create<uint8_t>(buffer_size));
 }
@@ -116,7 +116,7 @@ WMIDellDevice::~WMIDellDevice()
 	Buffer::deleter(m_buffer);
 }
 
-bool WMIDellDevice::evaluate(uint16_t smi_class, uint16_t select, const int_array args, int_array &res)
+bool WMIDellDevice::evaluate(WMI_CLASS smi_class, WMI_SELECTOR select, const int_array args, int_array &res)
 {
 	bool result = false;
 	char method[5] = "WM";
@@ -176,7 +176,7 @@ bool WMIDellDevice::parse_wdg(IOACPIPlatformDevice* device)
 				{
 					if (find_guid(gblock[i].guid) != nullptr)
 						continue;
-					wrapped_guid_block gb;
+					extended_guid_block gb;
 					memcpy(&gb, &gblock[i], sizeof(struct guid_block));
 					gb.device = device;
 					PANIC_COND(!guid_list.push_back(gb), "sdell", "evector::push_back has failed");
@@ -200,7 +200,7 @@ bool WMIDellDevice::parse_wdg(IOACPIPlatformDevice* device)
  * WMI buffer length        12       4    <length>
  * WMI hotfix number        16       4    <hotfix>
  */
-bool WMIDellDevice::dell_wmi_descriptor_probe(const wrapped_guid_block *gblock)
+bool WMIDellDevice::dell_wmi_descriptor_probe(const extended_guid_block *gblock)
 {
 	if (gblock->flags & (ACPI_WMI_EVENT | ACPI_WMI_METHOD)) {
 		SYSLOG("sdell", "dell_wmi_get_size: block DELL_WMI_DESCRIPTOR_GUID has wrong flags");
@@ -291,7 +291,7 @@ bool WMIDellDevice::dell_wmi_descriptor_probe(const wrapped_guid_block *gblock)
 	return result;
 }
 
-const struct wrapped_guid_block* WMIDellDevice::find_guid(const uid_arr &guid)
+const struct extended_guid_block* WMIDellDevice::find_guid(const uid_arr &guid)
 {
 	for (size_t i = 0; i < guid_list.size(); i++) {
 		auto &gblock = guid_list[i];

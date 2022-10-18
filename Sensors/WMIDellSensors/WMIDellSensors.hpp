@@ -14,6 +14,7 @@
 
 #include "SMIMonitor.hpp"
 #include <IOKit/IOService.h>
+#include <IOKit/IOUserClient.h>
 #include <IOKit/IOReportTypes.h>
 #include <IOKit/acpi/IOACPIPlatformDevice.h>
 #include <IOKit/pwr_mgt/IOPMPowerSource.h>
@@ -23,6 +24,10 @@
 #include <Headers/kern_util.hpp>
 
 #include "WMIDellDevice.hpp"
+
+#define MAXUSERS	5
+
+class WMIDellUserClient;
 
 class EXPORT WMIDellSensors : public IOService {
 	OSDeclareDefaultStructors(WMIDellSensors)
@@ -152,6 +157,12 @@ public:
 	 */
 	static IOReturn IOSleepHandler(void *target, void */*refCon*/, UInt32 messageType, IOService */*provider*/,	void *messageArgument, vm_size_t /*argSize*/);
 	
+	
+	bool evaluate(WMI_CLASS smi_class, WMI_SELECTOR select, const int_array args, int_array &res);
+	virtual IOReturn runAction(UInt32 action, UInt32 *outSize, void **outData, void *extraArg);
+	IOReturn newUserClient(task_t owningTask, void * securityID, UInt32 type, IOUserClient ** handler) override;
+	void closeChild(WMIDellUserClient *ptr);
+	
 	IONotifier *notifier {};
 	
 	IOWorkLoop *workLoop {};
@@ -161,6 +172,44 @@ public:
 	 *  Pointer to WMI device
 	 */
 	WMIDellDevice *wmiDevice {nullptr};
+	
+	size_t mPrefPanelMemoryBufSize = sizeof(calling_interface_buffer);
+	calling_interface_buffer mPrefPanelMemoryBuf = {};
+	UInt16 mClientCount = 0;
+	WMIDellUserClient *mClientPtr[MAXUSERS+1] = {};
+};
+
+class WMIDellUserClient : public IOUserClient
+{
+	OSDeclareDefaultStructors(WMIDellUserClient);
+	
+public:
+	static const WMIDellUserClient *withTask(task_t owningTask);
+	void free() override;
+	bool start(IOService *provider) override;
+	void stop(IOService *provider) override;
+	
+	bool initWithTask(task_t owningTask, void *securityID, UInt32 type, OSDictionary *properties) override;
+	IOReturn clientClose() override;
+	IOReturn clientDied() override;
+	
+	bool set_Q_Size(UInt32 capacity);
+	
+	bool willTerminate(IOService *provider, IOOptionBits options) override;
+	bool didTerminate(IOService *provider, IOOptionBits options, bool *defer) override;
+	bool terminate(IOOptionBits options = 0) override;
+	
+	IOExternalMethod *getTargetAndMethodForIndex(IOService **targetP, UInt32 index) override;
+	IOReturn clientMemoryForType(UInt32 type, IOOptionBits *options, IOMemoryDescriptor **memory) override;
+	IOReturn actionEvaluate(UInt32 *dataIn, UInt32 *dataOut, IOByteCount inputSize, IOByteCount *outputSize);
+	
+public:
+	task_t fTask = {};
+   // Remove IODataQueue because of security issue recommend by Apple
+	int Q_Err = {};
+	
+private:
+	WMIDellSensors *mDevice;
 };
 
 #endif /* WMIDellSensors_hpp */
