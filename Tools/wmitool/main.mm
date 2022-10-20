@@ -76,7 +76,8 @@ void usage(const char *name)
 
 	printf("Usage:\n");
 	printf("raw call:  \n    %s wmi <class> <selector> [input1] [input2] [input3] [input4] \n\n", name);
-	printf("get current thermal info :\n    %s -g, --get-thermal-info   This will display the thermal information of a system \n\n", name);
+	printf("get information : \n %s --info -i,  This will Display the Supported Features of USTT and AAC\n\n", name);
+	printf("get current thermal info :\n %s  --get-thermal-info -g,  This will display the thermal information of a system \n\n", name);
 	printf("set thermal mode: \n %s --set-thermal-mode   Option to set Thermal Mode; balanced, cool-bottom, quiet, performance \n\n", name);
 }
 
@@ -104,6 +105,44 @@ uint32_t get_byte(uint32_t num, uint8_t byte_pos)
 	if (byte_pos < 0 | byte_pos > 3)
 		return 0xFFFFFFFF;
 	return ((num >> (byte_pos*8)) & 0xFF);
+}
+
+void PrintSupportedThermModes()
+{
+	printf("\n Print all the Available Thermal Information of your system: \n");
+	printf("-------------------------------------------------------------------\n");
+
+	calling_interface_buffer in  = {};
+	calling_interface_buffer out = {};
+	size_t outsize = sizeof(out);
+	in.cmd_class  = 17;
+	in.cmd_select = 19;
+
+	kern_return_t ret = IOConnectCallStructMethod(connect, actionEvaluate, &in, sizeof(in), &out, &outsize);
+	if (ret != KERN_SUCCESS)
+		printf("Can't connect to StructMethod to send commands\n");
+	else {
+		if (out.output[0] != 0) {
+			printf("Info: Unable to Get Thermal Information on this system\n");
+		} else {
+			printf(" \nSupported Thermal Modes: \n");
+			if (is_set(out.output[1], 0)) printf("\t Balanced");
+			if (is_set(out.output[1], 1)) printf("\t Cool Bottom");
+			if (is_set(out.output[1], 2)) printf("\t Quiet");
+			if (is_set(out.output[1], 3)) printf("\t Performance");
+							
+			printf(" \nSupported Active Acoustic Controller (AAC) modes: \n");
+			if (is_set((get_byte(out.output[1], 1)), 0)) printf("\t AAC (Balanced)");
+			if (is_set((get_byte(out.output[1], 1)), 1)) printf("\t AAC (Cool Bottom)");
+			if (is_set((get_byte(out.output[1], 1)), 2)) printf("\t ACC (Quiet)");
+			if (is_set((get_byte(out.output[1], 1)), 3)) printf("\t ACC (Performance)");
+											
+			printf(" \nSupported AAC Configuration type: \n");
+			if (get_byte(out.output[2], 1) == 0) printf("\tGlobal (AAC enable/disable applies to all supported USTT modes)");
+			if (get_byte(out.output[2], 1) == 1) printf("\tUser Selectable Thermal Table(USTT) mode specific");
+			printf("\n");
+		}
+	}
 }
 
 uint32_t GetCurrentThermalMode(const char *flag="default")
@@ -195,16 +234,12 @@ void SetCurrentThermalMode(const char *thermal_mode)
 }
 
 int main(int argc, const char * argv[]) {
-
-	char * parameter;
-	if (argc >= 2)
-	{
-		parameter = (char *)argv[1];
-	} else {
+	
+	char * parameter = (argc >= 2) ? (char *)argv[1] : NULL;
+	if (parameter == NULL || !strncmp(parameter, "--help", 6)) {
 		usage(argv[0]);
 		return 1;
 	}
-
 	
 	service = getService();
 
@@ -250,6 +285,9 @@ int main(int argc, const char * argv[]) {
 		else
 			printf("actionEvaluate returns res[0] = %d, res[1] = %d, res[2] = %d, res[3] = %d\n", out.output[0], out.output[1], out.output[2], out.output[3]);
 	}
+	else if (!strncmp(parameter, "-i", 2) || !strncmp(parameter, "--info", 6)) {
+		PrintSupportedThermModes();
+	}
 	else if (!strncmp(parameter, "-g", 2) || !strncmp(parameter, "--get-thermal-info", 18)) {
 		GetCurrentThermalMode();
 	}
@@ -270,7 +308,6 @@ int main(int argc, const char * argv[]) {
 		}
 		SetCurrentThermalMode(thermal_mode);
 	}
-
 		
 	if (connect)
 		IOServiceClose(connect);
