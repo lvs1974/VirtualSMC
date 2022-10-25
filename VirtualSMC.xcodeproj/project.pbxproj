@@ -100,6 +100,7 @@
 		F681569F2496B649007C21AD /* SMIMonitor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F681569D2496B624007C21AD /* SMIMonitor.cpp */; };
 		F68156A12498FD42007C21AD /* SMIState.hpp in Headers */ = {isa = PBXBuildFile; fileRef = F68156A02498FD28007C21AD /* SMIState.hpp */; };
 		F6A66EC328FE953400294715 /* wmi_defines.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A66EC228FE953400294715 /* wmi_defines.h */; };
+		F6AB305A2908384A003FCCC3 /* thermal.mm in Sources */ = {isa = PBXBuildFile; fileRef = F6AB30592908384A003FCCC3 /* thermal.mm */; };
 		F6E45D6B28F7FC2000B832AF /* plugin_start.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE405ED81E4A080700AA0B3D /* plugin_start.cpp */; };
 		F6E45D7228F7FC2000B832AF /* libkmod.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CE8D9F7E2517B58C008C44E8 /* libkmod.a */; };
 		F6E45D9428F7FC5D00B832AF /* KeyImplementations.hpp in Headers */ = {isa = PBXBuildFile; fileRef = F6E45D8028F7FC5C00B832AF /* KeyImplementations.hpp */; };
@@ -459,6 +460,8 @@
 		F681569D2496B624007C21AD /* SMIMonitor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SMIMonitor.cpp; sourceTree = "<group>"; };
 		F68156A02498FD28007C21AD /* SMIState.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SMIState.hpp; sourceTree = "<group>"; };
 		F6A66EC228FE953400294715 /* wmi_defines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = wmi_defines.h; sourceTree = "<group>"; };
+		F6AB30582908383C003FCCC3 /* wmi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wmi.h; sourceTree = "<group>"; };
+		F6AB30592908384A003FCCC3 /* thermal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = thermal.mm; sourceTree = "<group>"; };
 		F6E45D7828F7FC2000B832AF /* WMIDellSensors.kext */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WMIDellSensors.kext; sourceTree = BUILT_PRODUCTS_DIR; };
 		F6E45D8028F7FC5C00B832AF /* KeyImplementations.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = KeyImplementations.hpp; sourceTree = "<group>"; };
 		F6E45D8128F7FC5C00B832AF /* SMIMonitor.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SMIMonitor.hpp; sourceTree = "<group>"; };
@@ -963,6 +966,8 @@
 		F6F312CF28FEA2D800FC31AD /* wmitool */ = {
 			isa = PBXGroup;
 			children = (
+				F6AB30592908384A003FCCC3 /* thermal.mm */,
+				F6AB30582908383C003FCCC3 /* wmi.h */,
 				F6F312D028FEA2D800FC31AD /* main.mm */,
 			);
 			path = wmitool;
@@ -1689,6 +1694,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F6F312D128FEA2D800FC31AD /* main.mm in Sources */,
+				F6AB305A2908384A003FCCC3 /* thermal.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
