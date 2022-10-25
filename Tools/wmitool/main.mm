@@ -24,7 +24,7 @@ io_service_t getService()
 	kern_return_t 	ret;
 	io_string_t 	path;
 	
-	ret = IOMasterPort(MACH_PORT_NULL, &masterPort);
+	ret = IOMainPort(MACH_PORT_NULL, &masterPort);
 	if (ret != KERN_SUCCESS) {
 		printf("Can't get masterport\n");
 		goto failure;
