@@ -35,20 +35,20 @@ int PrintSupportedThermModes()
 			return 1;
 		} else {
 			printf(" \nSupported Thermal Modes: \n");
-			if (is_set(out.output[1], 0)) printf("\t Balanced");
-			if (is_set(out.output[1], 1)) printf("\t Cool Bottom");
-			if (is_set(out.output[1], 2)) printf("\t Quiet");
-			if (is_set(out.output[1], 3)) printf("\t Performance");
+			if (is_set(out.output[1], 0)) printf("\t Balanced\n");
+			if (is_set(out.output[1], 1)) printf("\t Cool Bottom\n");
+			if (is_set(out.output[1], 2)) printf("\t Quiet\n");
+			if (is_set(out.output[1], 3)) printf("\t Performance\n");
 							
 			printf(" \nSupported Active Acoustic Controller (AAC) modes: \n");
-			if (is_set((get_byte(out.output[1], 1)), 0)) printf("\t AAC (Balanced)");
-			if (is_set((get_byte(out.output[1], 1)), 1)) printf("\t AAC (Cool Bottom)");
-			if (is_set((get_byte(out.output[1], 1)), 2)) printf("\t ACC (Quiet)");
-			if (is_set((get_byte(out.output[1], 1)), 3)) printf("\t ACC (Performance)");
+			if (is_set((get_byte(out.output[1], 1)), 0)) printf("\t AAC (Balanced)\n");
+			if (is_set((get_byte(out.output[1], 1)), 1)) printf("\t AAC (Cool Bottom)\n");
+			if (is_set((get_byte(out.output[1], 1)), 2)) printf("\t ACC (Quiet)\n");
+			if (is_set((get_byte(out.output[1], 1)), 3)) printf("\t ACC (Performance)\n");
 											
 			printf(" \nSupported AAC Configuration type: \n");
-			if (get_byte(out.output[2], 1) == 0) printf("\tGlobal (AAC enable/disable applies to all supported USTT modes)");
-			if (get_byte(out.output[2], 1) == 1) printf("\tUser Selectable Thermal Table(USTT) mode specific");
+			if (get_byte(out.output[2], 1) == 0) printf("\tGlobal (AAC enable/disable applies to all supported USTT modes)\n");
+			if (get_byte(out.output[2], 1) == 1) printf("\tUser Selectable Thermal Table(USTT) mode specific\n");
 			printf("\n");
 		}
 	}

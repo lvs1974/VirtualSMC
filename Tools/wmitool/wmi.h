@@ -31,3 +31,4 @@ extern uint32_t get_byte(uint32_t num, uint8_t byte_pos);
 extern int  	PrintSupportedThermModes();
 extern int      GetCurrentThermalMode(const char *flag="default");
 extern int  	SetCurrentThermalMode(const char *thermal_mode);
+extern int      PrintBatteryChargingState();

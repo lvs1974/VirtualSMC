@@ -65,6 +65,7 @@ void usage(const char *name)
 	printf("get information : \n %s --info -i,  This will Display the Supported Features of USTT and AAC\n\n", name);
 	printf("get current thermal info :\n %s  --get-thermal-info -g,  This will display the thermal information of a system \n\n", name);
 	printf("set thermal mode: \n %s --set-thermal-mode   Option to set Thermal Mode; balanced, cool-bottom, quiet, performance \n\n", name);
+	printf("get battery charging info :\n %s  --battery-charge -c, This will get the current battery charging state \n\n", name);
 }
 
 unsigned long long hex2int(const char *s)
@@ -178,6 +179,8 @@ int main(int argc, const char * argv[]) {
 			goto exit;
 		}
 		result = SetCurrentThermalMode(thermal_mode);
+	} else if (!strncmp(parameter, "-c", 2) || !strncmp(parameter, "--battery-charge", 16)) {
+		result = PrintBatteryChargingState();
 	} else {
 		usage(argv[0]);
 	}
