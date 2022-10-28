@@ -32,3 +32,4 @@ extern int  	PrintSupportedThermModes();
 extern int      GetCurrentThermalMode(const char *flag="default");
 extern int  	SetCurrentThermalMode(const char *thermal_mode);
 extern int      PrintBatteryChargingState();
+extern int      PrintSysInfo();

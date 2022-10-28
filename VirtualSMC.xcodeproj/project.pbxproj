@@ -88,6 +88,7 @@
 		CEC803821FFC8BFA008544A7 /* kern_intrs.hpp in Headers */ = {isa = PBXBuildFile; fileRef = CEC803801FFC8BFA008544A7 /* kern_intrs.hpp */; };
 		CED5DBE820AAB6E6001FE8CF /* kern_efiend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CED5DBE720AAB6E6001FE8CF /* kern_efiend.cpp */; };
 		DF412897249556C70071334F /* SSDT-BATC.dsl in Resources */ = {isa = PBXBuildFile; fileRef = DF412896249556C60071334F /* SSDT-BATC.dsl */; };
+		F60B9884290C1CDD00E8229B /* sysinfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = F60B9883290C1CDD00E8229B /* sysinfo.mm */; };
 		F61454732527962900A84C06 /* kern_hooks.hpp in Headers */ = {isa = PBXBuildFile; fileRef = F6145471252794DE00A84C06 /* kern_hooks.hpp */; };
 		F61454742527963E00A84C06 /* kern_hooks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F6145472252794DF00A84C06 /* kern_hooks.cpp */; };
 		F61454752527963E00A84C06 /* kern_start.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F61454702527945C00A84C06 /* kern_start.cpp */; };
@@ -448,6 +449,7 @@
 		CED5DBE720AAB6E6001FE8CF /* kern_efiend.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = kern_efiend.cpp; sourceTree = "<group>"; };
 		CEF2169D216937F200378E02 /* AppleSmc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleSmc.h; sourceTree = "<group>"; };
 		DF412896249556C60071334F /* SSDT-BATC.dsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "SSDT-BATC.dsl"; path = "Docs/SSDT-BATC.dsl"; sourceTree = "<group>"; };
+		F60B9883290C1CDD00E8229B /* sysinfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = sysinfo.mm; sourceTree = "<group>"; };
 		F61454702527945C00A84C06 /* kern_start.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = kern_start.cpp; sourceTree = "<group>"; };
 		F6145471252794DE00A84C06 /* kern_hooks.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = kern_hooks.hpp; sourceTree = "<group>"; };
 		F6145472252794DF00A84C06 /* kern_hooks.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = kern_hooks.cpp; sourceTree = "<group>"; };
@@ -968,6 +970,7 @@
 		F6F312CF28FEA2D800FC31AD /* wmitool */ = {
 			isa = PBXGroup;
 			children = (
+				F60B9883290C1CDD00E8229B /* sysinfo.mm */,
 				F6AB305B290840F5003FCCC3 /* battery.mm */,
 				F6AB30592908384A003FCCC3 /* thermal.mm */,
 				F6AB30582908383C003FCCC3 /* wmi.h */,
@@ -1697,6 +1700,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F6F312D128FEA2D800FC31AD /* main.mm in Sources */,
+				F60B9884290C1CDD00E8229B /* sysinfo.mm in Sources */,
 				F6AB305C290840F5003FCCC3 /* battery.mm in Sources */,
 				F6AB305A2908384A003FCCC3 /* thermal.mm in Sources */,
 			);
