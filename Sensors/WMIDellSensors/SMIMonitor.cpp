@@ -542,7 +542,8 @@ void SMIMonitor::staticUpdateThreadEntry(thread_call_param_t param0, thread_call
 void SMIMonitor::updateSensorsLoop() {
 	
 	i8k_set_fan_control_auto(); // force automatic control
-		
+	int smm_call_counter = 0;
+
 	while (true) {
 		
 		bool force_access = (--force_update_counter >= 0);
@@ -561,7 +562,7 @@ void SMIMonitor::updateSensorsLoop() {
 				else
 					SYSLOG("sdell", "WMI evaluate has failed");
 			}
-			else {
+			else if ((smm_call_counter % 5) == 0){
 				int sensor = state.fanInfo[i].index;
 				int rc = i8k_get_fan_speed(sensor, force_access);
 				if (rc >= 0)
@@ -569,21 +570,11 @@ void SMIMonitor::updateSensorsLoop() {
 				else
 					DBGLOG("sdell", "SMM reading error %d for fan %d", rc, sensor);
 			}
-			handleSmcUpdatesInIdle(4);
 		}
 		
-		//		for (int i=0; i<tempCount && awake; ++i)
-		//		{
-		//			int sensor = state.tempInfo[i].index;
-		//			int rc = i8k_get_temp(sensor, force_access);
-		//			if (rc >= 0)
-		//				state.tempInfo[i].temp = rc;
-		//			else
-		//				DBGLOG("sdell", "SMM reading error %d for temp sensor %d", rc, sensor);
-		//			handleSmcUpdatesInIdle(4);
-		//		}
-				
-		handleSmcUpdatesInIdle(5);
+		smm_call_counter++;
+		
+		handleSmcUpdatesInIdle(10);
 	}
 }
 

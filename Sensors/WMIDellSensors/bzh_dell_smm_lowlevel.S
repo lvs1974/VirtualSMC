@@ -18,6 +18,7 @@
 
 .intel_syntax noprefix
 .globl _dell_smm_lowlevel
+.extern _IOSleep
 
 // rdi:SMBIOS_PKG* cmd
 _dell_smm_lowlevel:
@@ -57,14 +58,16 @@ _dell_smm_lowlevel:
 
   out 0xb2,al
 
-  nop
-  nop
-  nop
-  nop
-  nop
-  nop
-  nop
-  nop
+  push rsi
+  push rdi
+  push rax
+  push rcx
+  mov  edi, 0x64
+  call _IOSleep
+  pop rcx
+  pop rax
+  pop rdi
+  pop rsi
 
   out 0x84,al
 

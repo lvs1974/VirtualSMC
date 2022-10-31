@@ -61,7 +61,7 @@ void usage(const char *name)
 	printf("--------------------------------------------------------------------------\n");
 
 	printf("Usage:\n");
-	printf("raw call:  \n    %s wmi <class> <selector> [input1] [input2] [input3] [input4] \n\n", name);
+	printf("raw call:  \n    %s --raw <class> <selector> [input1] [input2] [input3] [input4] \n\n", name);
 	printf("get information : \n %s --info -i,  This will Display the Supported Features of USTT and AAC\n\n", name);
 	printf("get current thermal info :\n %s  --get-thermal-info -g,  This will display the thermal information of a system \n\n", name);
 	printf("set thermal mode: \n %s --set-thermal-mode   Option to set Thermal Mode; balanced, cool-bottom, quiet, performance \n\n", name);
@@ -149,7 +149,7 @@ int main(int argc, const char * argv[]) {
 		goto exit;
 	}
 	
-    if (!strncmp(parameter, "wmi", 3)) {
+    if (!strncmp(parameter, "--raw", 5)) {
 		if (argc < 4)
 		{
 			usage(argv[0]);
