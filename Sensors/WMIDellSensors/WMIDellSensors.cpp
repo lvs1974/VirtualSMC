@@ -217,7 +217,6 @@ IOReturn WMIDellSensors::IOSleepHandler(void *target, void *, UInt32 messageType
 
 	if (messageType != kIOMessageSystemWillSleep &&
 		messageType != kIOMessageSystemHasPoweredOn &&
-		messageType != kIOMessageSystemWillNotSleep &&
 		messageType != kIOMessageSystemWillPowerOff &&
 		messageType != kIOMessageSystemWillRestart) {
 		return kIOReturnUnsupported;
@@ -226,7 +225,8 @@ IOReturn WMIDellSensors::IOSleepHandler(void *target, void *, UInt32 messageType
 	DBGLOG("sdell", "IOSleepHandler message type = 0x%x", messageType);
 
 	swNote->returnValue = 0;
-	acknowledgeSleepWakeNotification(swNote->powerRef);
+	if (messageType != kIOMessageSystemHasPoweredOn)
+		acknowledgeSleepWakeNotification(swNote->powerRef);
 
 	auto that = OSDynamicCast(WMIDellSensors, reinterpret_cast<WMIDellSensors*>(target));
 
@@ -234,10 +234,10 @@ IOReturn WMIDellSensors::IOSleepHandler(void *target, void *, UInt32 messageType
 		if (that && that->eventTimer)
 			that->eventTimer->cancelTimeout();
 		SMIMonitor::getShared()->handlePowerOff();
-	} else if (messageType == kIOMessageSystemHasPoweredOn || messageType == kIOMessageSystemWillNotSleep) {
+	} else if (messageType == kIOMessageSystemHasPoweredOn) {
 		auto that = OSDynamicCast(WMIDellSensors, reinterpret_cast<WMIDellSensors*>(target));
 		if (that && that->eventTimer)
-			that->eventTimer->setTimeoutMS(10000);
+			that->eventTimer->setTimeoutMS(20000);
 		else
 			SMIMonitor::getShared()->handlePowerOn();
 	}
