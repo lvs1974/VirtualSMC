@@ -145,10 +145,13 @@ bool WMIDellDevice::evaluate(WMI_CLASS smi_class, WMI_SELECTOR select, const int
 				memcpy(&m_buffer->std, output->getBytesNoCopy(), output->getLength());
 				memcpy(res, m_buffer->std.output, sizeof(int_array));
 				result = true;
+				output->release();
 			}
-			out->release();
 		}
 	}
+	params[0]->release();
+	params[1]->release();
+	params[2]->release();
 		
 	return result;
 }
@@ -181,8 +184,8 @@ bool WMIDellDevice::parse_wdg(IOACPIPlatformDevice* device)
 					gb.device = device;
 					PANIC_COND(!guid_list.push_back(gb), "sdell", "evector::push_back has failed");
 				}
+				output->release();
 			}
-			out->release();
 		}
 	}
 	
@@ -225,6 +228,7 @@ bool WMIDellDevice::dell_wmi_descriptor_probe(const extended_guid_block *gblock)
 		OSObject *params[1];
 		params[0] = OSNumber::withNumber(static_cast<unsigned long long>(0), 1);
 		IOReturn ret = gblock->device->evaluateInteger(wc_method, &wc_status, params, 1);
+		params[0]->release();
 		if (ret != kIOReturnSuccess) {
 			SYSLOG("sdell", "dell_wmi_get_size: evaluateInteger for method %s has failed with code 0x%x", wc_method, ret);
 			return false;
@@ -271,9 +275,10 @@ bool WMIDellDevice::dell_wmi_descriptor_probe(const extended_guid_block *gblock)
 					}
 				}
 			}
+			output->release();
 		}
-		out->release();
 	}
+	params[0]->release();
 	
 	/*
 	 * If ACPI_WMI_EXPENSIVE, call the relevant WCxx method, even if
@@ -286,6 +291,7 @@ bool WMIDellDevice::dell_wmi_descriptor_probe(const extended_guid_block *gblock)
 		if (ret != kIOReturnSuccess) {
 			SYSLOG("sdell", "dell_wmi_get_size: evaluateInteger %s has failed with code 0x%x", wc_method, ret);
 		}
+		params[0]->release();
 	}
 	
 	return result;
