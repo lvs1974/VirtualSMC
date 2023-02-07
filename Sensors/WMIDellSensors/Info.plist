@@ -26,12 +26,12 @@
 		<dict>
 			<key>StopFanOffsets</key>
 			<array>
-				<integer>0</integer>
-				<integer>0</integer>
-				<integer>0</integer>
-				<integer>0</integer>
-				<integer>0</integer>
-				<integer>0</integer>
+				<integer>100</integer>
+				<integer>100</integer>
+				<integer>100</integer>
+				<integer>100</integer>
+				<integer>100</integer>
+				<integer>100</integer>
 			</array>
 			<key>FanNames</key>
 			<array>

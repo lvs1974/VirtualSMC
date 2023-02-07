@@ -149,9 +149,8 @@ bool WMIDellDevice::evaluate(WMI_CLASS smi_class, WMI_SELECTOR select, const int
 			}
 		}
 	}
-	params[0]->release();
-	params[1]->release();
-	params[2]->release();
+	for (auto *param : params)
+		param->release();
 		
 	return result;
 }
@@ -225,10 +224,9 @@ bool WMIDellDevice::dell_wmi_descriptor_probe(const extended_guid_block *gblock)
 	 */
 	if (gblock->flags & ACPI_WMI_EXPENSIVE) {
 		strncat(wc_method, gblock->object_id, 2);
-		OSObject *params[1];
-		params[0] = OSNumber::withNumber(static_cast<unsigned long long>(0), 1);
-		IOReturn ret = gblock->device->evaluateInteger(wc_method, &wc_status, params, 1);
-		params[0]->release();
+		OSObject *param = OSNumber::withNumber(static_cast<unsigned long long>(0), 1);
+		IOReturn ret = gblock->device->evaluateInteger(wc_method, &wc_status, &param, 1);
+		param->release();
 		if (ret != kIOReturnSuccess) {
 			SYSLOG("sdell", "dell_wmi_get_size: evaluateInteger for method %s has failed with code 0x%x", wc_method, ret);
 			return false;
@@ -238,9 +236,8 @@ bool WMIDellDevice::dell_wmi_descriptor_probe(const extended_guid_block *gblock)
 	bool result = false;
 	strncat(method, gblock->object_id, 2);
 	OSObject *out = nullptr;
-	OSObject *params[1];
-	params[0] = OSNumber::withNumber(static_cast<unsigned long long>(0), 0);
-	IOReturn ret = gblock->device->evaluateObject(method, &out, params, 1);
+	OSObject *param = OSNumber::withNumber(static_cast<unsigned long long>(0), 0);
+	IOReturn ret = gblock->device->evaluateObject(method, &out, &param, 1);
 	if (ret != kIOReturnSuccess) {
 		SYSLOG("sdell", "dell_wmi_get_size: evaluateObject %s has failed with code 0x%x", method, ret);
 	}
@@ -278,20 +275,19 @@ bool WMIDellDevice::dell_wmi_descriptor_probe(const extended_guid_block *gblock)
 			output->release();
 		}
 	}
-	params[0]->release();
+	param->release();
 	
 	/*
 	 * If ACPI_WMI_EXPENSIVE, call the relevant WCxx method, even if
 	 * the WQxx method failed - we should disable collection anyway.
 	 */
 	if ((gblock->flags & ACPI_WMI_EXPENSIVE) && ACPI_SUCCESS(wc_status)) {
-		OSObject *params[1];
-		params[0] = OSNumber::withNumber(static_cast<unsigned long long>(0), 0);
-		IOReturn ret = gblock->device->evaluateInteger(wc_method, &wc_status, params, 1);
+		OSObject *param = OSNumber::withNumber(static_cast<unsigned long long>(0), 0);
+		IOReturn ret = gblock->device->evaluateInteger(wc_method, &wc_status, &param, 1);
 		if (ret != kIOReturnSuccess) {
 			SYSLOG("sdell", "dell_wmi_get_size: evaluateInteger %s has failed with code 0x%x", wc_method, ret);
 		}
-		params[0]->release();
+		param->release();
 	}
 	
 	return result;
