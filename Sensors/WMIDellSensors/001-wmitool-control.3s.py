@@ -47,27 +47,26 @@ class App:
             cmd = ("/usr/local/bin/wmitool", "--set-thermal-mode={}".format(str(new_mode)))
             p = subprocess.run(cmd, capture_output=True, text=True)
             p.check_returncode()
-            return 0 if "successfully" in p.stdout else 1
-        
+
         cmd = ("/usr/local/bin/wmitool", "-g")
         p = subprocess.run(cmd, capture_output=True, text=True)
         p.check_returncode()
+        mode = None
+        modes = ["Balanced", "Cool Bottom", "Quiet", "Performance"]
         if p.stdout is not None:
-           if "Balanced" in  p.stdout:
-               print("Balanced")
-           if "Cool Bottom" in  p.stdout:
-               print("Cool Bottom")
-           if "Quiet" in  p.stdout:
-               print("Quiet")
-           if "Performance" in p.stdout:
-               print("Performance")
+           for current_mode in modes:
+               if current_mode in  p.stdout:
+                  mode = current_mode
 
+        print(mode if mode is not None else "Unknown")
         print("---")
-        print(f'Balanced    | refresh=true bash="{script_path()}" param1=--set-thermal-mode=balanced terminal=false')
-        print(f'Cool Bottom | refresh=true bash="{script_path()}" param1=--set-thermal-mode=cool-bottom terminal=false')
-        print(f'Quiet       | refresh=true bash="{script_path()}" param1=--set-thermal-mode=quiet terminal=false')
-        print(f'Performance | refresh=true bash="{script_path()}" param1=--set-thermal-mode=performance terminal=false')
-        return 0
+        
+        for current_mode in modes:
+            if mode == current_mode:
+               print(f'✓ {mode}'.format(mode=mode))
+            else:
+               param = current_mode.replace(' ', '-').lower()
+               print(f'{current_mode}    | refresh=true bash="{script_path()}" param1=--set-thermal-mode={param} terminal=false'.format(mode=current_mode, param=param))
 
 app = App()
 
