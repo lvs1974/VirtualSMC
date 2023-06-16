@@ -31,7 +31,7 @@ PluginConfiguration ADDPR(config) {
 	bootargBeta,
 	arrsize(bootargBeta),
 	KernelVersion::MountainLion,
-	KernelVersion::Ventura,
+	KernelVersion::Sonoma,
 	[]() {
 	}
 };
