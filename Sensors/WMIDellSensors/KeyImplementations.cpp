@@ -22,7 +22,7 @@ SMC_RESULT F0Mn::readAccess() {
 
 SMC_RESULT F0Mn::update(const SMC_DATA *src) {
 	SMIIdxKey::update(src);
-	DBGLOG("sdell", "Set new minimum speed for fan %d to %d", index, VirtualSMCAPI::decodeIntFp(SmcKeyTypeFpe2, *reinterpret_cast<const uint16_t *>(src)));
+	DBGLOG("sdell", "Set new minimum speed for fan %lu to %d", index, VirtualSMCAPI::decodeIntFp(SmcKeyTypeFpe2, *reinterpret_cast<const uint16_t *>(src)));
 	return SmcSuccess;
 }
 
@@ -34,7 +34,7 @@ SMC_RESULT F0Mx::readAccess() {
 
 SMC_RESULT F0Mx::update(const SMC_DATA *src) {
 	SMIIdxKey::update(src);
-	DBGLOG("sdell", "Set new maximum speed for fan %d to %d", index, VirtualSMCAPI::decodeIntFp(SmcKeyTypeFpe2, *reinterpret_cast<const uint16_t *>(src)));
+	DBGLOG("sdell", "Set new maximum speed for fan %lu to %d", index, VirtualSMCAPI::decodeIntFp(SmcKeyTypeFpe2, *reinterpret_cast<const uint16_t *>(src)));
 	return SmcSuccess;
 }
 
@@ -46,7 +46,7 @@ SMC_RESULT F0Md::readAccess() {
 
 SMC_RESULT F0Md::update(const SMC_DATA *src) {
 	SMIIdxKey::update(src);
-	SMIMonitor::getShared()->postSmcUpdate(KeyF0Md, index, src, sizeof(UInt8));
+	//SMIMonitor::getShared()->postSmcUpdate(KeyF0Md, index, src, sizeof(UInt8));
 	return SmcSuccess;
 }
 
@@ -58,7 +58,7 @@ SMC_RESULT F0Tg::readAccess() {
 
 SMC_RESULT F0Tg::update(const SMC_DATA *src) {
 	SMIIdxKey::update(src);
-	SMIMonitor::getShared()->postSmcUpdate(KeyF0Tg, index, src, sizeof(UInt16));
+	//SMIMonitor::getShared()->postSmcUpdate(KeyF0Tg, index, src, sizeof(UInt16));
 	return SmcSuccess;
 }
 
@@ -72,7 +72,7 @@ SMC_RESULT FS__::readAccess() {
 
 SMC_RESULT FS__::update(const SMC_DATA *src) {
 	SMIKey::update(src);
-	SMIMonitor::getShared()->postSmcUpdate(KeyFS__, -1, src, sizeof(UInt16));
+	//SMIMonitor::getShared()->postSmcUpdate(KeyFS__, -1, src, sizeof(UInt16));
 	return SmcSuccess;
 }
 
@@ -82,7 +82,7 @@ SMC_RESULT TG0P::readAccess() {
 	return SmcSuccess;
 }
 
-SMC_RESULT Tm0P::readAccess() {
+SMC_RESULT TGVP::readAccess() {
 	auto val = SMIMonitor::getShared()->state.tempInfo[index].temp;
 	*reinterpret_cast<uint16_t *>(data) = VirtualSMCAPI::encodeIntSp(SmcKeyTypeSp78, val);
 	return SmcSuccess;

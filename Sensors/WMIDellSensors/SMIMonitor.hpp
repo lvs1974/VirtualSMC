@@ -92,6 +92,15 @@ struct PACKED SMBIOS_PKG {
 	uint32_t stat2;  // = 0
 };
 
+struct PACKED SMMRegisters {
+	unsigned int eax;
+	unsigned int ebx;
+	unsigned int ecx;
+	unsigned int edx;
+	unsigned int esi;
+	unsigned int edi;
+};
+
 struct StoredSmcUpdate {
 	/**
 	 *  SMC key
@@ -189,7 +198,6 @@ public:
 	
 	static atomic_bool busy;
 
-
 private:
 	/**
 	 *  The only allowed battery manager instance
@@ -242,14 +250,10 @@ private:
 	static constexpr size_t MaxActiveSmcUpdates {40};
 	
 	/**
-	 *  How many sensor updates should have access to sensors (be forced)
-	 */
-	atomic_int force_update_counter = 0;
-	
-	/**
 	 *  Pointer to WMI device
 	 */
 	WMIDellDevice *wmiDevice {nullptr};
+
 	
 private:
 
@@ -284,6 +288,11 @@ private:
 	 *  Update sensors values
 	 */
 	void updateSensorsLoop();
+	
+	/**
+	 *  Update all sensors
+	 */
+	void handleManualUpdateAllSensors();
 
 	/*
 	 * Handle SMC updates in idle
@@ -294,8 +303,9 @@ private:
 	 *  SMC update handlers
 	 */
 	void hanldeManualControlUpdate(size_t index, UInt8 *data);
-	void hanldeManualTargetSpeedUpdate(size_t index, UInt8 *data);
+	void hanldeManualTargetFanSpeedUpdate(size_t index, UInt8 *data);
 	void handleManualForceFanControlUpdate(UInt8 *data);
+	void hanldeManualTargetFanModeUpdate(size_t index, UInt8 *data);
 
 	int  i8k_smm(SMBIOS_PKG *sc, bool force_access = false);
 	bool i8k_get_dell_sig_aux(int fn);
@@ -316,5 +326,8 @@ private:
 static constexpr SMC_KEY KeyF0Md = SMC_MAKE_IDENTIFIER('F',0,'M','d');
 static constexpr SMC_KEY KeyF0Tg = SMC_MAKE_IDENTIFIER('F',0,'T','g');
 static constexpr SMC_KEY KeyFS__ = SMC_MAKE_IDENTIFIER('F','S','!',' ');
+static constexpr SMC_KEY KeyRFSH = SMC_MAKE_IDENTIFIER('R','F','S','H');
+static constexpr SMC_KEY KeyFaMD = SMC_MAKE_IDENTIFIER('F','a','M','D');
+
 
 #endif /* SMIMonitor_hpp */

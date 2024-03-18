@@ -93,6 +93,9 @@
 		F61454742527963E00A84C06 /* kern_hooks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F6145472252794DF00A84C06 /* kern_hooks.cpp */; };
 		F61454752527963E00A84C06 /* kern_start.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F61454702527945C00A84C06 /* kern_start.cpp */; };
 		F63CAF8725279FFB00D22631 /* plugin_start.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE405ED81E4A080700AA0B3D /* plugin_start.cpp */; };
+		F64D0E4D2BA884E300957AA1 /* 001-wmitool-control.10s.py in Resources */ = {isa = PBXBuildFile; fileRef = F64D0E4C2BA884E300957AA1 /* 001-wmitool-control.10s.py */; };
+		F67A28D92BA2F73B0025C0DC /* kern_hooks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F67A28D72BA2F73B0025C0DC /* kern_hooks.cpp */; };
+		F67A28DA2BA2F73B0025C0DC /* kern_hooks.hpp in Headers */ = {isa = PBXBuildFile; fileRef = F67A28D82BA2F73B0025C0DC /* kern_hooks.hpp */; };
 		F68156982496B4AC007C21AD /* SMCDellSensors.hpp in Headers */ = {isa = PBXBuildFile; fileRef = F68156962496B235007C21AD /* SMCDellSensors.hpp */; };
 		F68156992496B4C4007C21AD /* SMCDellSensors.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F68156972496B235007C21AD /* SMCDellSensors.cpp */; };
 		F681569A2496B572007C21AD /* KeyImplementations.hpp in Headers */ = {isa = PBXBuildFile; fileRef = F68156872496B0BC007C21AD /* KeyImplementations.hpp */; };
@@ -101,7 +104,6 @@
 		F681569F2496B649007C21AD /* SMIMonitor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F681569D2496B624007C21AD /* SMIMonitor.cpp */; };
 		F68156A12498FD42007C21AD /* SMIState.hpp in Headers */ = {isa = PBXBuildFile; fileRef = F68156A02498FD28007C21AD /* SMIState.hpp */; };
 		F6A66EC328FE953400294715 /* wmi_defines.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A66EC228FE953400294715 /* wmi_defines.h */; };
-		F6AB1E31299A561B007110DD /* 001-wmitool-control.3s.py in Resources */ = {isa = PBXBuildFile; fileRef = F6AB1E30299A561B007110DD /* 001-wmitool-control.3s.py */; };
 		F6AB305A2908384A003FCCC3 /* thermal.mm in Sources */ = {isa = PBXBuildFile; fileRef = F6AB30592908384A003FCCC3 /* thermal.mm */; };
 		F6AB305C290840F5003FCCC3 /* battery.mm in Sources */ = {isa = PBXBuildFile; fileRef = F6AB305B290840F5003FCCC3 /* battery.mm */; };
 		F6E45D6B28F7FC2000B832AF /* plugin_start.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE405ED81E4A080700AA0B3D /* plugin_start.cpp */; };
@@ -454,6 +456,9 @@
 		F61454702527945C00A84C06 /* kern_start.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = kern_start.cpp; sourceTree = "<group>"; };
 		F6145471252794DE00A84C06 /* kern_hooks.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = kern_hooks.hpp; sourceTree = "<group>"; };
 		F6145472252794DF00A84C06 /* kern_hooks.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = kern_hooks.cpp; sourceTree = "<group>"; };
+		F64D0E4C2BA884E300957AA1 /* 001-wmitool-control.10s.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = "001-wmitool-control.10s.py"; sourceTree = "<group>"; };
+		F67A28D72BA2F73B0025C0DC /* kern_hooks.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = kern_hooks.cpp; sourceTree = "<group>"; };
+		F67A28D82BA2F73B0025C0DC /* kern_hooks.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = kern_hooks.hpp; sourceTree = "<group>"; };
 		F68156842496AFCF007C21AD /* SMCDellSensors.kext */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SMCDellSensors.kext; sourceTree = BUILT_PRODUCTS_DIR; };
 		F68156872496B0BC007C21AD /* KeyImplementations.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = KeyImplementations.hpp; sourceTree = "<group>"; };
 		F68156902496B0BC007C21AD /* KeyImplementations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeyImplementations.cpp; sourceTree = "<group>"; };
@@ -464,7 +469,6 @@
 		F681569D2496B624007C21AD /* SMIMonitor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SMIMonitor.cpp; sourceTree = "<group>"; };
 		F68156A02498FD28007C21AD /* SMIState.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SMIState.hpp; sourceTree = "<group>"; };
 		F6A66EC228FE953400294715 /* wmi_defines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = wmi_defines.h; sourceTree = "<group>"; };
-		F6AB1E30299A561B007110DD /* 001-wmitool-control.3s.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = "001-wmitool-control.3s.py"; sourceTree = "<group>"; };
 		F6AB30582908383C003FCCC3 /* wmi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wmi.h; sourceTree = "<group>"; };
 		F6AB30592908384A003FCCC3 /* thermal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = thermal.mm; sourceTree = "<group>"; };
 		F6AB305B290840F5003FCCC3 /* battery.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = battery.mm; sourceTree = "<group>"; };
@@ -952,7 +956,9 @@
 		F6E45D7F28F7FC5C00B832AF /* WMIDellSensors */ = {
 			isa = PBXGroup;
 			children = (
-				F6AB1E30299A561B007110DD /* 001-wmitool-control.3s.py */,
+				F64D0E4C2BA884E300957AA1 /* 001-wmitool-control.10s.py */,
+				F67A28D72BA2F73B0025C0DC /* kern_hooks.cpp */,
+				F67A28D82BA2F73B0025C0DC /* kern_hooks.hpp */,
 				F6E45D8028F7FC5C00B832AF /* KeyImplementations.hpp */,
 				F6E45D8128F7FC5C00B832AF /* SMIMonitor.hpp */,
 				F6E45D8228F7FC5C00B832AF /* WMIDellSensors.cpp */,
@@ -1071,6 +1077,7 @@
 				F6E45D9928F7FC5D00B832AF /* SMIState.hpp in Headers */,
 				F6E45D9528F7FC5D00B832AF /* SMIMonitor.hpp in Headers */,
 				F6A66EC328FE953400294715 /* wmi_defines.h in Headers */,
+				F67A28DA2BA2F73B0025C0DC /* kern_hooks.hpp in Headers */,
 				F6E45DA628F8016C00B832AF /* WMIDellDevice.hpp in Headers */,
 				F6E45D9D28F7FC5D00B832AF /* WMIDellSensors.hpp in Headers */,
 			);
@@ -1473,7 +1480,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F6AB1E31299A561B007110DD /* 001-wmitool-control.3s.py in Resources */,
+				F64D0E4D2BA884E300957AA1 /* 001-wmitool-control.10s.py in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1691,6 +1698,7 @@
 			files = (
 				F6E45D9A28F7FC5D00B832AF /* SMIMonitor.cpp in Sources */,
 				F6E45D9628F7FC5D00B832AF /* WMIDellSensors.cpp in Sources */,
+				F67A28D92BA2F73B0025C0DC /* kern_hooks.cpp in Sources */,
 				F6E45D6B28F7FC2000B832AF /* plugin_start.cpp in Sources */,
 				F6E45D9C28F7FC5D00B832AF /* bzh_dell_smm_lowlevel.S in Sources */,
 				F6E45DA528F8016C00B832AF /* WMIDellDevice.cpp in Sources */,

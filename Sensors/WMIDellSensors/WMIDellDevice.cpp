@@ -265,7 +265,7 @@ bool WMIDellDevice::dell_wmi_descriptor_probe(const extended_guid_block *gblock)
 					} else {
 						result = true;
 						buffer_size = buffer[3];
-						DBGLOG("sdell", "Detected Dell WMI interface version %lu, buffer size %lu, hotfix %lu\n", buffer[2], buffer_size, buffer[4]);
+						DBGLOG("sdell", "Detected Dell WMI interface version %u, buffer size %lu, hotfix %u\n", buffer[2], buffer_size, buffer[4]);
 						if (!buffer[4]) {
 							SYSLOG("sdell","WMI SMBIOS userspace interface not supported(%u), try upgrading to a newer BIOS", buffer[4]);
 						}

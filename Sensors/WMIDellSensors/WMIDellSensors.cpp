@@ -47,6 +47,8 @@ IOService *WMIDellSensors::probe(IOService *provider, SInt32 *score) {
 	
 	if (!SMIMonitor::getShared()->probe())
 		return nullptr;
+	
+	tryToFindRsubDevice();
 
 	auto fanCount = min(SMIMonitor::getShared()->fanCount, MaxIndexCount);
 	VirtualSMCAPI::addKey(KeyFNum, vsmcPlugin.data,
@@ -96,6 +98,7 @@ IOService *WMIDellSensors::probe(IOService *provider, SInt32 *score) {
 		if (type <= TempInfo::Unsupported || type >= TempInfo::Last) {
 			DBGLOG("sdell", "Temp sensor type %d is unknown, auto assign value %d", type, SMIMonitor::getShared()->state.tempInfo[i].index);
 			type = static_cast<TempInfo::SMMTempSensorType>(SMIMonitor::getShared()->state.tempInfo[i].index);
+			SMIMonitor::getShared()->state.tempInfo[i].type = type;
 		}
 
 		switch (type)
@@ -108,7 +111,7 @@ IOService *WMIDellSensors::probe(IOService *provider, SInt32 *score) {
 				SMC_KEY_ATTRIBUTE_WRITE|SMC_KEY_ATTRIBUTE_READ));
 			break;
 		case TempInfo::Memory:
-			VirtualSMCAPI::addKey(KeyTm0P(0), vsmcPlugin.data, VirtualSMCAPI::valueWithSp(0, SmcKeyTypeSp78, new Tm0P(i),
+			VirtualSMCAPI::addKey(KeyTGVP, vsmcPlugin.data, VirtualSMCAPI::valueWithSp(0, SmcKeyTypeSp78, new TGVP(i),
 				SMC_KEY_ATTRIBUTE_WRITE|SMC_KEY_ATTRIBUTE_READ));
 			break;
 		case TempInfo::Misc:
@@ -132,6 +135,54 @@ IOService *WMIDellSensors::probe(IOService *provider, SInt32 *score) {
 	qsort(const_cast<VirtualSMCKeyValue *>(vsmcPlugin.data.data()), vsmcPlugin.data.size(), sizeof(VirtualSMCKeyValue), VirtualSMCKeyValue::compare);
 
 	return this;
+}
+
+void WMIDellSensors::tryToFindRsubDevice()
+{
+	auto dict = IOService::nameMatching("AppleACPIPlatformExpert");
+	if (!dict) {
+		SYSLOG("sdell", "WTF? Failed to create matching dictionary");
+		return;
+	}
+	
+	auto acpi = IOService::waitForMatchingService(dict);
+	dict->release();
+	
+	if (!acpi) {
+		SYSLOG("sdell", "WTF? No ACPI");
+		return;
+	}
+	
+	acpi->release();
+	
+	dict = IOService::nameMatching("RSUB001");
+	if (!dict) {
+		SYSLOG("sdell", "WTF? Failed to create matching dictionary");
+		return;
+	}
+	
+	auto deviceIterator = IOService::getMatchingServices(dict);
+	dict->release();
+	
+	if (!deviceIterator) {
+		SYSLOG("sdell", "No iterator");
+		return;
+	}
+
+	rsubDevice = OSDynamicCast(IOACPIPlatformDevice, deviceIterator->getNextObject());
+	deviceIterator->release();
+	
+	if (!rsubDevice) {
+		SYSLOG("sdell", "RSUB001 device not found");
+		return;
+	}
+
+	if (rsubDevice->validateObject("HOTP") != kIOReturnSuccess) {
+		SYSLOG("sdell", "No functional HOTP method on RSUB device");
+		return;
+	}
+	
+	DBGLOG("sdell", "RSUB device has been found");
 }
 
 bool WMIDellSensors::start(IOService *provider) {
@@ -247,6 +298,75 @@ IOReturn WMIDellSensors::IOSleepHandler(void *target, void *, UInt32 messageType
 
 bool WMIDellSensors::evaluate(WMI_CLASS smi_class, WMI_SELECTOR select, const int_array args, int_array &res)
 {
+	switch (smi_class)
+	{
+		case WMI_CLASS::RsubCall: {
+			if (rsubDevice == nullptr)
+				return kIOReturnUnsupported;
+			auto result = rsubDevice->evaluateObject("HOTP");
+			DBGLOG("sdell", "WMIDellSensors: evaluateObject(HOTP) result = %x", result);
+			return result;
+		}
+	
+		case WMI_CLASS::RefreshSensors: {
+			SMIMonitor::getShared()->postSmcUpdate(KeyRFSH, 0, 0, 0, true);
+			return KERN_SUCCESS;
+		}
+	
+		case WMI_CLASS::AutoFanMode: {
+			// turn off manual control for all fans
+			UInt16 data = 0;
+			SMIMonitor::getShared()->postSmcUpdate(KeyFS__, -1, &data, sizeof(data), true);
+			return KERN_SUCCESS;
+		}
+	
+		case WMI_CLASS::ManualFanMode: {
+			// turn on manual control for all fans
+			UInt16 data = 0xffff;
+			SMIMonitor::getShared()->postSmcUpdate(KeyFS__, -1, &data, sizeof(data), true);
+			return KERN_SUCCESS;
+		}
+	
+		case WMI_CLASS::LeftOff: {
+			UInt8 data = 0;
+			SMIMonitor::getShared()->postSmcUpdate(KeyFaMD, 0, &data, sizeof(data), true);
+			return KERN_SUCCESS;
+		}
+
+		case WMI_CLASS::LeftMedium: {
+			UInt8 data = 1;
+			SMIMonitor::getShared()->postSmcUpdate(KeyFaMD, 0, &data, sizeof(data), true);
+			return KERN_SUCCESS;
+		}
+
+		case WMI_CLASS::LeftHigh: {
+			UInt8 data = 2;
+			SMIMonitor::getShared()->postSmcUpdate(KeyFaMD, 0, &data, sizeof(data), true);
+			return KERN_SUCCESS;
+		}
+	
+		case WMI_CLASS::RightOff: {
+			UInt8 data = 0;
+			SMIMonitor::getShared()->postSmcUpdate(KeyFaMD, 1, &data, sizeof(data), true);
+			return KERN_SUCCESS;
+		}
+
+		case WMI_CLASS::RightMedium: {
+			UInt8 data = 1;
+			SMIMonitor::getShared()->postSmcUpdate(KeyFaMD, 1, &data, sizeof(data), true);
+			return KERN_SUCCESS;
+		}
+
+		case WMI_CLASS::RightHigh: {
+			UInt8 data = 2;
+			SMIMonitor::getShared()->postSmcUpdate(KeyFaMD, 1, &data, sizeof(data), true);
+			return KERN_SUCCESS;
+		}
+	
+	default:
+		break;
+	}
+
 	return wmiDevice->evaluate(smi_class, select, args, res);
 }
 
@@ -295,7 +415,6 @@ IOReturn WMIDellSensors::newUserClient(task_t owningTask, void * securityID, UIn
 	}
 	
 	DBGLOG("sdell", "WMIDellSensors: newUserClient() client = %p", mClientPtr[mClientCount]);
-	
 	return (ioReturn);
 }
 

@@ -53,11 +53,11 @@ class EXPORT WMIDellSensors : public IOService {
 	static constexpr SMC_KEY KeyFS__ = SMC_MAKE_IDENTIFIER('F','S','!',' ');
 	
 	static constexpr SMC_KEY KeyTG0P(size_t i) { return SMC_MAKE_IDENTIFIER('T','G',KeyIndexes[i],'P'); }
-	static constexpr SMC_KEY KeyTm0P(size_t i) { return SMC_MAKE_IDENTIFIER('T','m',KeyIndexes[i],'P'); }
+	static constexpr SMC_KEY KeyTGVP = SMC_MAKE_IDENTIFIER('T','G','V','P');
 	static constexpr SMC_KEY KeyTN0P(size_t i) { return SMC_MAKE_IDENTIFIER('T','N',KeyIndexes[i],'P'); }
 	static constexpr SMC_KEY KeyTA0P(size_t i) { return SMC_MAKE_IDENTIFIER('T','A',KeyIndexes[i],'P'); }
 	static constexpr SMC_KEY KeyTW0P(size_t i) { return SMC_MAKE_IDENTIFIER('T','W',KeyIndexes[i],'P'); }
-	
+		
 	/**
 	 *  VirtualSMC service registration notifier
 	 */
@@ -88,6 +88,8 @@ class EXPORT WMIDellSensors : public IOService {
 		{kIOPMPowerStateVersion1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 		{kIOPMPowerStateVersion1, kIOPMPowerOn | kIOPMDeviceUsable, kIOPMPowerOn, kIOPMPowerOn, 0, 0, 0, 0, 0, 0, 0, 0}
 	};
+	
+	void tryToFindRsubDevice();
 
 public:
 	/* Registry Entry allocation & init */
@@ -172,6 +174,11 @@ public:
 	 *  Pointer to WMI device
 	 */
 	WMIDellDevice *wmiDevice {nullptr};
+	
+	/**
+	 *  Hotplug initiation device
+	 */
+	IOACPIPlatformDevice *rsubDevice {nullptr};
 	
 	size_t mPrefPanelMemoryBufSize = sizeof(calling_interface_buffer);
 	calling_interface_buffer mPrefPanelMemoryBuf = {};

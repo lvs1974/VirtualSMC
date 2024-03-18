@@ -7,6 +7,9 @@
 
 #include <Headers/plugin_start.hpp>
 #include <Headers/kern_api.hpp>
+#include "kern_hooks.hpp"
+
+KERNELHOOKS hooks;
 
 static const char *bootargOff[] {
 	"-delloff"
@@ -33,5 +36,6 @@ PluginConfiguration ADDPR(config) {
 	KernelVersion::MountainLion,
 	KernelVersion::Sonoma,
 	[]() {
+		hooks.init();
 	}
 };

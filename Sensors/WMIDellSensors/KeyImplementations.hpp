@@ -32,7 +32,7 @@ class FS__ : public SMIKey  { using SMIKey::SMIKey; protected: SMC_RESULT readAc
 
 class TC0P : public SMIIdxKey { using SMIIdxKey::SMIIdxKey; protected: SMC_RESULT readAccess() override; };
 class TG0P : public SMIIdxKey { using SMIIdxKey::SMIIdxKey; protected: SMC_RESULT readAccess() override; };
-class Tm0P : public SMIIdxKey { using SMIIdxKey::SMIIdxKey; protected: SMC_RESULT readAccess() override; };
+class TGVP : public SMIIdxKey { using SMIIdxKey::SMIIdxKey; protected: SMC_RESULT readAccess() override; };
 class TN0P : public SMIIdxKey { using SMIIdxKey::SMIIdxKey; protected: SMC_RESULT readAccess() override; };
 class TA0P : public SMIIdxKey { using SMIIdxKey::SMIIdxKey; protected: SMC_RESULT readAccess() override; };
 class TW0P : public SMIIdxKey { using SMIIdxKey::SMIIdxKey; protected: SMC_RESULT readAccess() override; };

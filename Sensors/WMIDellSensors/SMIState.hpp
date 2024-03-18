@@ -39,7 +39,7 @@ struct FanInfo {
 	atomic_int		targetSpeed  = 0;
 	atomic_int		speed   	 = 0;
 	atomic_uint     wmi_addr     = 0;
-	atomic_bool     smm          = true;
+	atomic_bool     smm          = false;
 };
 
 /**
