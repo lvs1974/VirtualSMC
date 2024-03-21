@@ -507,7 +507,9 @@ bool SMIMonitor::findFanSensors() {
 				state.fanInfo[fanCount].minSpeed = i8k_get_fan_nominal_speed(i, I8K_FAN_LOW);
 				state.fanInfo[fanCount].maxSpeed = i8k_get_fan_nominal_speed(i, I8K_FAN_HIGH);
 				state.fanInfo[fanCount].smm = true;
-				state.fanInfo[fanCount].status = rc;
+				rc = i8k_get_fan_status(i);
+				if (rc >= 0)
+					state.fanInfo[i].status = rc;
 				int type = i8k_get_fan_type(i);
 				if ((type > FanInfo::Unsupported) && (type < FanInfo::Last))
 					state.fanInfo[fanCount].type = static_cast<FanInfo::FanType>(type);
@@ -663,6 +665,9 @@ void SMIMonitor::handleManualUpdateAllSensors()
 				state.fanInfo[i].speed = rc;
 			else
 				DBGLOG("sdell", "SMM reading error %d for fan %d", rc, sensor);
+			rc = i8k_get_fan_status(sensor);
+			if (rc >= 0)
+				state.fanInfo[i].status = rc;
 		}
 	}
 	

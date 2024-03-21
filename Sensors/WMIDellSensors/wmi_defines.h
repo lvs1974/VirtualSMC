@@ -73,16 +73,11 @@ enum class WMI_CLASS : uint16_t
 	KeyboardBacklight = 4,	// For dealing with the keyboard backlight.
 	Info = 17,				// For getting or setting various information.
 	
-	RsubCall       = 32000,	// Call for ACPI method HOTP in device RSUB
-	RefreshSensors = 33000,	// Refresh all fan and temperature sensors
-	AutoFanMode    = 34000,
-	ManualFanMode  = 35000,
-	LeftOff		   = 36000,
-	LeftMedium     = 37000,
-	LeftHigh       = 38000,
-	RightOff       = 39000,
-	RightMedium    = 40000,
-	RightHigh      = 41000
+	RsubCall          = 32000,	// Call for ACPI method HOTP in device RSUB
+	RefreshSensors    = 33000,	// Refresh all fan and temperature sensors
+	SetFanControlMode = 34000,
+	GetFanMode	      = 36000,
+	SetFanMode	      = 37000
 };
 
 enum class WMI_SELECTOR : uint16_t

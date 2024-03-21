@@ -302,65 +302,35 @@ bool WMIDellSensors::evaluate(WMI_CLASS smi_class, WMI_SELECTOR select, const in
 	{
 		case WMI_CLASS::RsubCall: {
 			if (rsubDevice == nullptr)
-				return kIOReturnUnsupported;
+				return false;
 			auto result = rsubDevice->evaluateObject("HOTP");
 			DBGLOG("sdell", "WMIDellSensors: evaluateObject(HOTP) result = %x", result);
-			return result;
+			return result == KERN_SUCCESS;
 		}
 	
 		case WMI_CLASS::RefreshSensors: {
 			SMIMonitor::getShared()->postSmcUpdate(KeyRFSH, 0, 0, 0, true);
-			return KERN_SUCCESS;
+			return true;
 		}
 	
-		case WMI_CLASS::AutoFanMode: {
-			// turn off manual control for all fans
-			UInt16 data = 0;
+		case WMI_CLASS::SetFanControlMode: {
+			UInt16 data = args[0];
 			SMIMonitor::getShared()->postSmcUpdate(KeyFS__, -1, &data, sizeof(data), true);
-			return KERN_SUCCESS;
+			return true;
+		}
+			
+		case WMI_CLASS::GetFanMode: {
+			res[0] = 0;
+			res[1] = SMIMonitor::getShared()->fansStatus;
+			res[2] = SMIMonitor::getShared()->state.fanInfo[0].status;
+			res[3] = SMIMonitor::getShared()->state.fanInfo[1].status;
+			return true;
 		}
 	
-		case WMI_CLASS::ManualFanMode: {
-			// turn on manual control for all fans
-			UInt16 data = 0xffff;
-			SMIMonitor::getShared()->postSmcUpdate(KeyFS__, -1, &data, sizeof(data), true);
-			return KERN_SUCCESS;
-		}
-	
-		case WMI_CLASS::LeftOff: {
-			UInt8 data = 0;
-			SMIMonitor::getShared()->postSmcUpdate(KeyFaMD, 0, &data, sizeof(data), true);
-			return KERN_SUCCESS;
-		}
-
-		case WMI_CLASS::LeftMedium: {
-			UInt8 data = 1;
-			SMIMonitor::getShared()->postSmcUpdate(KeyFaMD, 0, &data, sizeof(data), true);
-			return KERN_SUCCESS;
-		}
-
-		case WMI_CLASS::LeftHigh: {
-			UInt8 data = 2;
-			SMIMonitor::getShared()->postSmcUpdate(KeyFaMD, 0, &data, sizeof(data), true);
-			return KERN_SUCCESS;
-		}
-	
-		case WMI_CLASS::RightOff: {
-			UInt8 data = 0;
-			SMIMonitor::getShared()->postSmcUpdate(KeyFaMD, 1, &data, sizeof(data), true);
-			return KERN_SUCCESS;
-		}
-
-		case WMI_CLASS::RightMedium: {
-			UInt8 data = 1;
-			SMIMonitor::getShared()->postSmcUpdate(KeyFaMD, 1, &data, sizeof(data), true);
-			return KERN_SUCCESS;
-		}
-
-		case WMI_CLASS::RightHigh: {
-			UInt8 data = 2;
-			SMIMonitor::getShared()->postSmcUpdate(KeyFaMD, 1, &data, sizeof(data), true);
-			return KERN_SUCCESS;
+		case WMI_CLASS::SetFanMode: {
+			UInt8 data = args[1];
+			SMIMonitor::getShared()->postSmcUpdate(KeyFaMD, args[0], &data, sizeof(data), true);
+			return true;
 		}
 	
 	default:

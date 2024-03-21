@@ -66,7 +66,8 @@ class App:
            for current_mode in modes:
                if current_mode in  p.stdout:
                   mode = current_mode
-
+                  
+                             
         print(mode if mode is not None else "Unknown")
         print("---")
         
@@ -82,80 +83,113 @@ class App:
             cmd = ("/usr/local/bin/wmitool", "--raw", "33000", "0")
             p = subprocess.run(cmd, capture_output=True, text=True)
             p.check_returncode()
-            return
             
         auto_mode = getattr(args, "auto")
         if auto_mode != None:
-            cmd = ("/usr/local/bin/wmitool", "--raw", "34000", "0")
+            cmd = ("/usr/local/bin/wmitool", "--raw", "34000", "0", "0")
             p = subprocess.run(cmd, capture_output=True, text=True)
             p.check_returncode()
-            return
             
         manual_mode = getattr(args, "manual")
         if manual_mode != None:
-            cmd = ("/usr/local/bin/wmitool", "--raw", "35000", "0")
+            cmd = ("/usr/local/bin/wmitool", "--raw", "34000", "0", "0xffff")
             p = subprocess.run(cmd, capture_output=True, text=True)
             p.check_returncode()
-            return
             
         left_off = getattr(args, "leftoff")
         if left_off != None:
-            cmd = ("/usr/local/bin/wmitool", "--raw", "36000", "0")
+            cmd = ("/usr/local/bin/wmitool", "--raw", "37000", "0", "0", "0")
             p = subprocess.run(cmd, capture_output=True, text=True)
             p.check_returncode()
-            return
             
         left_medium = getattr(args, "leftmedium")
         if left_medium != None:
-            cmd = ("/usr/local/bin/wmitool", "--raw", "37000", "0")
+            cmd = ("/usr/local/bin/wmitool", "--raw", "37000", "0", "0", "1")
             p = subprocess.run(cmd, capture_output=True, text=True)
             p.check_returncode()
-            return
             
         left_high = getattr(args, "lefthigh")
         if left_high != None:
-            cmd = ("/usr/local/bin/wmitool", "--raw", "38000", "0")
+            cmd = ("/usr/local/bin/wmitool", "--raw", "37000", "0", "0", "2")
             p = subprocess.run(cmd, capture_output=True, text=True)
             p.check_returncode()
-            return
 
         right_off = getattr(args, "rightoff")
         if right_off != None:
-            cmd = ("/usr/local/bin/wmitool", "--raw", "39000", "0")
+            cmd = ("/usr/local/bin/wmitool", "--raw", "37000", "0", "1", "0")
             p = subprocess.run(cmd, capture_output=True, text=True)
             p.check_returncode()
-            return
             
         right_medium = getattr(args, "rightmedium")
         if right_medium != None:
-            cmd = ("/usr/local/bin/wmitool", "--raw", "40000", "0")
+            cmd = ("/usr/local/bin/wmitool", "--raw", "37000", "0", "1", "1")
             p = subprocess.run(cmd, capture_output=True, text=True)
             p.check_returncode()
-            return
             
         right_high = getattr(args, "righthigh")
         if right_high != None:
-            cmd = ("/usr/local/bin/wmitool", "--raw", "41000", "0")
+            cmd = ("/usr/local/bin/wmitool", "--raw","37000", "0", "1", "2")
             p = subprocess.run(cmd, capture_output=True, text=True)
             p.check_returncode()
-            return
+            
+        cmd = ("/usr/local/bin/wmitool", "--raw", "36000", "0", "0")
+        p = subprocess.run(cmd, capture_output=True, text=True)
+        p.check_returncode()
+        fan_mode = None
+        fan_left_status = None
+        fan_right_status = None
+        if p.stdout is not None:
+           output = p.stdout
+           output.replace("actionEvaluate returns ", "")
+           results = output.split(',')
+           assert len(results) == 4
+           fan_mode = results[1].replace("res[1] = ", "").strip()	
+           fan_left_status = results[2].replace("res[2] = ", "").strip()
+           fan_right_status = results[3].replace("res[3] = ", "").strip()
+
             
         print("---")
         print(f'Refresh sensors | refresh=false bash="{script_path()}" param1=--refresh terminal=false')
 
         print("---")
-        print(f'Auto fan mode | refresh=false bash="{script_path()}" param1=--auto terminal=false')
-        print(f'Manual fan mode | refresh=false bash="{script_path()}" param1=--manual terminal=false')
+
+        if fan_mode == "0":
+            print(f'✓ Auto fan mode')
+        else:
+            print(f'Auto fan mode | refresh=true bash="{script_path()}" param1=--auto terminal=false')
+            
+        if fan_mode != "0":
+            print(f'✓ Manual fan mode')
+        else:
+            print(f'Manual fan mode | refresh=true bash="{script_path()}" param1=--manual terminal=false')
 
         print("---")
-        print(f'Left fan off | refresh=false bash="{script_path()}" param1=--leftoff terminal=false')
-        print(f'Left fan medium | refresh=false bash="{script_path()}" param1=--leftmedium terminal=false')
-        print(f'Left fan high | refresh=false bash="{script_path()}" param1=--lefthigh terminal=false')
+        if fan_left_status == "0":
+            print(f'✓ Left fan off')
+        else:
+            print(f'Left fan off | refresh=true bash="{script_path()}" param1=--leftoff terminal=false')
+        if fan_left_status == "1":
+            print(f'✓ Left fan medium')
+        else:
+            print(f'Left fan medium | refresh=true bash="{script_path()}" param1=--leftmedium terminal=false')
+        if fan_left_status == "2":
+            print(f'✓ Left fan high')
+        else:
+            print(f'Left fan high | refresh=true bash="{script_path()}" param1=--lefthigh terminal=false')
         
         print("---")
-        print(f'Right fan off | refresh=false bash="{script_path()}" param1=--rightoff terminal=false')
-        print(f'Right fan medium | refresh=false bash="{script_path()}" param1=--rightmedium terminal=false')
-        print(f'Right fan high | refresh=false bash="{script_path()}" param1=--righthigh terminal=false')
+        if fan_right_status == "0":
+            print(f'✓ Right fan off')
+        else:
+            print(f'Right fan off | refresh=true bash="{script_path()}" param1=--rightoff terminal=false')
+        if fan_right_status == "1":
+            print(f'✓ Right fan medium')
+        else:
+            print(f'Right fan medium | refresh=true bash="{script_path()}" param1=--rightmedium terminal=false')
+        if fan_right_status == "2":
+            print(f'✓ Right fan high')
+        else:
+            print(f'Right fan high | refresh=true bash="{script_path()}" param1=--righthigh terminal=false')
 
 app = App()
 
