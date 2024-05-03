@@ -39,6 +39,7 @@ class App:
         # Adding optional argument
         parser.add_argument("-s", "--set-thermal-mode", help = "Set Thermal Mode")
         parser.add_argument("--refresh", help = "Refresh all sensors", nargs='?', const=1, type=int)
+        parser.add_argument("--hibernate", help = "Hibernate macOS", nargs='?', const=1, type=int)
         parser.add_argument("--auto", help = "Auto fan mode", nargs='?', const=1, type=int)
         parser.add_argument("--manual", help = "Manual fan mode", nargs='?', const=1, type=int)
         parser.add_argument("--leftoff", help = "Left fan off", nargs='?', const=1, type=int)
@@ -81,6 +82,12 @@ class App:
         raw_mode = getattr(args, "refresh")
         if raw_mode != None:
             cmd = ("/usr/local/bin/wmitool", "--raw", "33000", "0")
+            p = subprocess.run(cmd, capture_output=True, text=True)
+            p.check_returncode()
+            
+        hibernate = getattr(args, "hibernate")
+        if hibernate != None:
+            cmd = ("/usr/local/bin/wmitool", "--raw", "32000", "0")
             p = subprocess.run(cmd, capture_output=True, text=True)
             p.check_returncode()
             
@@ -150,6 +157,7 @@ class App:
             
         print("---")
         print(f'Refresh sensors | refresh=false bash="{script_path()}" param1=--refresh terminal=false')
+        print(f'Hibernate macOS | refresh=false bash="{script_path()}" param1=--hibernate terminal=false')
 
         print("---")
 
