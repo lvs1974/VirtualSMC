@@ -1,4 +1,4 @@
-#!/usr/local/bin/python3
+#!/usr/local/bin/python3.12
 # coding=utf-8
 
 # <xbar.title>Dell WMI Control</xbar.title>
@@ -87,6 +87,8 @@ class App:
             
         hibernate = getattr(args, "hibernate")
         if hibernate != None:
+            cmd = ("/bin/bash", "/Users/sergey/.sleep")
+            p = subprocess.run(cmd, capture_output=False, text=True)
             cmd = ("/usr/local/bin/wmitool", "--raw", "32000", "0")
             p = subprocess.run(cmd, capture_output=True, text=True)
             p.check_returncode()
