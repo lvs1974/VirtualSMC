@@ -28,6 +28,27 @@
 		35DF6DD320E16D1C00604535 /* KeyImplementations.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 35DF6DD120E16D1C00604535 /* KeyImplementations.hpp */; };
 		35F03CE520D5A1CF00CA1D2D /* AmbientLightValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 35F03CE320D5A1CF00CA1D2D /* AmbientLightValue.cpp */; };
 		35F03CE620D5A1CF00CA1D2D /* AmbientLightValue.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 35F03CE420D5A1CF00CA1D2D /* AmbientLightValue.hpp */; };
+		A50B521A2CD79B46000C14B6 /* token_obj.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A52194F72CD5429E00021D2B /* token_obj.cpp */; };
+		A50D475E2CD7B93100A03B2E /* token_da.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A52195052CD569D400021D2B /* token_da.cpp */; };
+		A50D47602CD7B9E700A03B2E /* smi_password.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A50D475F2CD7B9E700A03B2E /* smi_password.cpp */; };
+		A51153A42CD3FAAE0013FCCC /* types.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A50F96212CD38CB300A7C381 /* types.hpp */; };
+		A51153A52CD3FAAE0013FCCC /* smbios.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A50F961D2CD38CB300A7C381 /* smbios.hpp */; };
+		A51153A72CD3FAAE0013FCCC /* smbios_impl.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A50F962E2CD38E0500A7C381 /* smbios_impl.hpp */; };
+		A51153A82CD3FABF0013FCCC /* smbios_linux.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A50F96342CD38F1D00A7C381 /* smbios_linux.cpp */; };
+		A517DC9B2CD796130067641C /* smi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A521950C2CD6397E00021D2B /* smi.cpp */; };
+		A517DC9C2CD796130067641C /* smi_obj.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A52195092CD638C700021D2B /* smi_obj.cpp */; };
+		A51A3A982CD401C10006B6FD /* smbios_obj.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A50F962C2CD38D8200A7C381 /* smbios_obj.cpp */; };
+		A522FE5D2CD78864002E9244 /* smi_impl.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A521950B2CD6397E00021D2B /* smi_impl.hpp */; };
+		A522FE5E2CD78864002E9244 /* smi.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A52195072CD57C3700021D2B /* smi.hpp */; };
+		A52754D82CD7AC53003A0814 /* token_d4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A52194FB2CD54D8B00021D2B /* token_d4.cpp */; };
+		A53807AE2CD7863B00BE53C9 /* cmos_impl.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A52195032CD553EB00021D2B /* cmos_impl.hpp */; };
+		A53807B02CD7863B00BE53C9 /* cmos.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A52194FD2CD5516F00021D2B /* cmos.hpp */; };
+		A53807B12CD7865F00BE53C9 /* cmos_linux.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A52194FF2CD552C500021D2B /* cmos_linux.cpp */; };
+		A53807B22CD7865F00BE53C9 /* cmos.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A52195002CD552C500021D2B /* cmos.cpp */; };
+		A55482432CD77DEC00FABD71 /* checksum.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A52097912CD6CE1B00705F42 /* checksum.cpp */; };
+		A55482442CD77E4700FABD71 /* token_impl.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A52194F52CD5429E00021D2B /* token_impl.hpp */; };
+		A55482452CD77E4700FABD71 /* token.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A52194F62CD5429E00021D2B /* token.hpp */; };
+		A55482472CD77F0D00FABD71 /* cmos_obj.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A55482462CD77F0D00FABD71 /* cmos_obj.cpp */; };
 		AB3F62662169880300E4EFFD /* NuvotonDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AB8CD0C321693FD4002FB4D2 /* NuvotonDevice.cpp */; };
 		AB445546216A8EED0011E44E /* SuperIODevice.hpp in Headers */ = {isa = PBXBuildFile; fileRef = ABA30FE12134A7F600256A25 /* SuperIODevice.hpp */; };
 		AB445547216A8EF20011E44E /* SMCSuperIO.hpp in Headers */ = {isa = PBXBuildFile; fileRef = ABA30FDF213371EE00256A25 /* SMCSuperIO.hpp */; };
@@ -115,7 +136,6 @@
 		F6E45D9828F7FC5D00B832AF /* KeyImplementations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F6E45D8428F7FC5C00B832AF /* KeyImplementations.cpp */; };
 		F6E45D9928F7FC5D00B832AF /* SMIState.hpp in Headers */ = {isa = PBXBuildFile; fileRef = F6E45D8528F7FC5C00B832AF /* SMIState.hpp */; };
 		F6E45D9A28F7FC5D00B832AF /* SMIMonitor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F6E45D8628F7FC5C00B832AF /* SMIMonitor.cpp */; };
-		F6E45D9C28F7FC5D00B832AF /* bzh_dell_smm_lowlevel.S in Sources */ = {isa = PBXBuildFile; fileRef = F6E45D8828F7FC5C00B832AF /* bzh_dell_smm_lowlevel.S */; };
 		F6E45D9D28F7FC5D00B832AF /* WMIDellSensors.hpp in Headers */ = {isa = PBXBuildFile; fileRef = F6E45D8928F7FC5C00B832AF /* WMIDellSensors.hpp */; };
 		F6E45DA528F8016C00B832AF /* WMIDellDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F6E45DA328F8016C00B832AF /* WMIDellDevice.cpp */; };
 		F6E45DA628F8016C00B832AF /* WMIDellDevice.hpp in Headers */ = {isa = PBXBuildFile; fileRef = F6E45DA428F8016C00B832AF /* WMIDellDevice.hpp */; };
@@ -340,6 +360,27 @@
 		35F03CE420D5A1CF00CA1D2D /* AmbientLightValue.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = AmbientLightValue.hpp; sourceTree = "<group>"; };
 		6F8741D724CE58BA00ED8B06 /* Battery Information Supplement.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = "Battery Information Supplement.md"; path = "Docs/Battery Information Supplement.md"; sourceTree = "<group>"; };
 		6F8741D824CE58BA00ED8B06 /* SSDT-BATS.dsl */ = {isa = PBXFileReference; lastKnownFileType = text; name = "SSDT-BATS.dsl"; path = "Docs/SSDT-BATS.dsl"; sourceTree = "<group>"; };
+		A50D475F2CD7B9E700A03B2E /* smi_password.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = smi_password.cpp; sourceTree = "<group>"; };
+		A50F961D2CD38CB300A7C381 /* smbios.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = smbios.hpp; sourceTree = "<group>"; };
+		A50F96212CD38CB300A7C381 /* types.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = types.hpp; sourceTree = "<group>"; };
+		A50F962C2CD38D8200A7C381 /* smbios_obj.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = smbios_obj.cpp; sourceTree = "<group>"; };
+		A50F962E2CD38E0500A7C381 /* smbios_impl.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = smbios_impl.hpp; sourceTree = "<group>"; };
+		A50F96342CD38F1D00A7C381 /* smbios_linux.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = smbios_linux.cpp; sourceTree = "<group>"; };
+		A52097912CD6CE1B00705F42 /* checksum.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = checksum.cpp; sourceTree = "<group>"; };
+		A52194F52CD5429E00021D2B /* token_impl.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = token_impl.hpp; sourceTree = "<group>"; };
+		A52194F62CD5429E00021D2B /* token.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = token.hpp; sourceTree = "<group>"; };
+		A52194F72CD5429E00021D2B /* token_obj.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = token_obj.cpp; sourceTree = "<group>"; };
+		A52194FB2CD54D8B00021D2B /* token_d4.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = token_d4.cpp; sourceTree = "<group>"; };
+		A52194FD2CD5516F00021D2B /* cmos.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = cmos.hpp; sourceTree = "<group>"; };
+		A52194FF2CD552C500021D2B /* cmos_linux.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cmos_linux.cpp; sourceTree = "<group>"; };
+		A52195002CD552C500021D2B /* cmos.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cmos.cpp; sourceTree = "<group>"; };
+		A52195032CD553EB00021D2B /* cmos_impl.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = cmos_impl.hpp; sourceTree = "<group>"; };
+		A52195052CD569D400021D2B /* token_da.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = token_da.cpp; sourceTree = "<group>"; };
+		A52195072CD57C3700021D2B /* smi.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = smi.hpp; sourceTree = "<group>"; };
+		A52195092CD638C700021D2B /* smi_obj.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = smi_obj.cpp; sourceTree = "<group>"; };
+		A521950B2CD6397E00021D2B /* smi_impl.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = smi_impl.hpp; sourceTree = "<group>"; };
+		A521950C2CD6397E00021D2B /* smi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = smi.cpp; sourceTree = "<group>"; };
+		A55482462CD77F0D00FABD71 /* cmos_obj.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cmos_obj.cpp; sourceTree = "<group>"; };
 		AB32839E2377588F00DFB7DE /* Resources */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Resources; sourceTree = "<group>"; };
 		AB44554A216A8F240011E44E /* ITEDevice.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ITEDevice.cpp; sourceTree = "<group>"; };
 		AB44554B216A8F240011E44E /* ITEDevice.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ITEDevice.hpp; sourceTree = "<group>"; };
@@ -743,6 +784,34 @@
 			path = SMCBatteryManager;
 			sourceTree = "<group>";
 		};
+		A50F96232CD38CB300A7C381 /* SMBios */ = {
+			isa = PBXGroup;
+			children = (
+				A50D475F2CD7B9E700A03B2E /* smi_password.cpp */,
+				A55482462CD77F0D00FABD71 /* cmos_obj.cpp */,
+				A52097912CD6CE1B00705F42 /* checksum.cpp */,
+				A521950B2CD6397E00021D2B /* smi_impl.hpp */,
+				A521950C2CD6397E00021D2B /* smi.cpp */,
+				A52195092CD638C700021D2B /* smi_obj.cpp */,
+				A52195072CD57C3700021D2B /* smi.hpp */,
+				A52195052CD569D400021D2B /* token_da.cpp */,
+				A52195032CD553EB00021D2B /* cmos_impl.hpp */,
+				A52194FF2CD552C500021D2B /* cmos_linux.cpp */,
+				A52195002CD552C500021D2B /* cmos.cpp */,
+				A52194FD2CD5516F00021D2B /* cmos.hpp */,
+				A52194FB2CD54D8B00021D2B /* token_d4.cpp */,
+				A52194F52CD5429E00021D2B /* token_impl.hpp */,
+				A52194F72CD5429E00021D2B /* token_obj.cpp */,
+				A52194F62CD5429E00021D2B /* token.hpp */,
+				A50F96212CD38CB300A7C381 /* types.hpp */,
+				A50F961D2CD38CB300A7C381 /* smbios.hpp */,
+				A50F96342CD38F1D00A7C381 /* smbios_linux.cpp */,
+				A50F962E2CD38E0500A7C381 /* smbios_impl.hpp */,
+				A50F962C2CD38D8200A7C381 /* smbios_obj.cpp */,
+			);
+			path = SMBios;
+			sourceTree = "<group>";
+		};
 		ABA30FDC213370A700256A25 /* SMCSuperIO */ = {
 			isa = PBXGroup;
 			children = (
@@ -956,6 +1025,7 @@
 		F6E45D7F28F7FC5C00B832AF /* WMIDellSensors */ = {
 			isa = PBXGroup;
 			children = (
+				A50F96232CD38CB300A7C381 /* SMBios */,
 				F64D0E4C2BA884E300957AA1 /* 001-wmitool-control.10s.py */,
 				F67A28D72BA2F73B0025C0DC /* kern_hooks.cpp */,
 				F67A28D82BA2F73B0025C0DC /* kern_hooks.hpp */,
@@ -1080,6 +1150,15 @@
 				F67A28DA2BA2F73B0025C0DC /* kern_hooks.hpp in Headers */,
 				F6E45DA628F8016C00B832AF /* WMIDellDevice.hpp in Headers */,
 				F6E45D9D28F7FC5D00B832AF /* WMIDellSensors.hpp in Headers */,
+				A51153A42CD3FAAE0013FCCC /* types.hpp in Headers */,
+				A53807B02CD7863B00BE53C9 /* cmos.hpp in Headers */,
+				A53807AE2CD7863B00BE53C9 /* cmos_impl.hpp in Headers */,
+				A522FE5E2CD78864002E9244 /* smi.hpp in Headers */,
+				A522FE5D2CD78864002E9244 /* smi_impl.hpp in Headers */,
+				A51153A52CD3FAAE0013FCCC /* smbios.hpp in Headers */,
+				A51153A72CD3FAAE0013FCCC /* smbios_impl.hpp in Headers */,
+				A55482452CD77E4700FABD71 /* token.hpp in Headers */,
+				A55482442CD77E4700FABD71 /* token_impl.hpp in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1700,10 +1779,21 @@
 				F6E45D9628F7FC5D00B832AF /* WMIDellSensors.cpp in Sources */,
 				F67A28D92BA2F73B0025C0DC /* kern_hooks.cpp in Sources */,
 				F6E45D6B28F7FC2000B832AF /* plugin_start.cpp in Sources */,
-				F6E45D9C28F7FC5D00B832AF /* bzh_dell_smm_lowlevel.S in Sources */,
 				F6E45DA528F8016C00B832AF /* WMIDellDevice.cpp in Sources */,
 				F6E45D9728F7FC5D00B832AF /* kern_start.cpp in Sources */,
 				F6E45D9828F7FC5D00B832AF /* KeyImplementations.cpp in Sources */,
+				A51A3A982CD401C10006B6FD /* smbios_obj.cpp in Sources */,
+				A51153A82CD3FABF0013FCCC /* smbios_linux.cpp in Sources */,
+				A55482432CD77DEC00FABD71 /* checksum.cpp in Sources */,
+				A53807B12CD7865F00BE53C9 /* cmos_linux.cpp in Sources */,
+				A55482472CD77F0D00FABD71 /* cmos_obj.cpp in Sources */,
+				A53807B22CD7865F00BE53C9 /* cmos.cpp in Sources */,
+				A517DC9B2CD796130067641C /* smi.cpp in Sources */,
+				A517DC9C2CD796130067641C /* smi_obj.cpp in Sources */,
+				A50D47602CD7B9E700A03B2E /* smi_password.cpp in Sources */,
+				A50B521A2CD79B46000C14B6 /* token_obj.cpp in Sources */,
+				A52754D82CD7AC53003A0814 /* token_d4.cpp in Sources */,
+				A50D475E2CD7B93100A03B2E /* token_da.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

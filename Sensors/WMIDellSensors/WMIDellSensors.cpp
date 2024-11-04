@@ -15,6 +15,11 @@
 
 #include "kern_hooks.hpp"
 
+//#include "smbios.hpp"
+//#include "token.hpp"
+//#include "smi.hpp"
+//#include "smi_impl.hpp"
+
 OSDefineMetaClassAndStructors(WMIDellSensors, IOService)
 
 bool WMIDellSensors::init(OSDictionary *properties) {
@@ -133,6 +138,81 @@ IOService *WMIDellSensors::probe(IOService *provider, SInt32 *score) {
 	}
 
 	qsort(const_cast<VirtualSMCKeyValue *>(vsmcPlugin.data.data()), vsmcPlugin.data.size(), sizeof(VirtualSMCKeyValue), VirtualSMCKeyValue::compare);
+	
+	// DEBUG SMBIOS functions
+	/*
+	struct smbios_table *smbios_table = smbios_table_factory(SMBIOS_DEFAULTS);
+	if (smbios_table != nullptr)
+	{
+		DBGLOG("sdell", "smbios_table_factory successful!");
+	}
+	
+	struct dell_smi_obj *smi = dell_smi_factory(DELL_SMI_DEFAULTS);
+	if (smi != nullptr)
+	{
+		DBGLOG("sdell", "dell_smi_factory successful!");
+		smi->wmiDevice = wmiDevice;
+	}
+	
+	struct token_table *token_table = token_table_factory(TOKEN_DEFAULTS);
+	if (token_table != nullptr)
+	{
+		DBGLOG("sdell", "token_table_factory successful!");
+		const struct token_obj *obj = token_table_get_next_by_id(token_table, nullptr, 0x0341);
+		if (token_obj_is_active(obj))
+			DBGLOG("sdell", "PRIMARILY_AC charging mode is selected");
+
+		obj = token_table_get_next_by_id(token_table, nullptr, 0x0342);
+		if (token_obj_is_active(obj))
+			DBGLOG("sdell", "ADAPTIVE charging mode is selected");
+		
+		obj = token_table_get_next_by_id(token_table, nullptr, 0x0343);
+		if (token_obj_is_active(obj))
+		{
+			DBGLOG("sdell", "CUSTOM charging mode is selected");
+			size_t len = 0;
+			obj = token_table_get_next_by_id(token_table, nullptr, 0x0349);
+			if (obj)
+			{
+				len = 4;
+				auto *str = token_obj_get_string(obj, &len);
+				if (str) {
+					DBGLOG("sdell", "low = %s", str);
+				}
+			}
+			obj = token_table_get_next_by_id(token_table, nullptr, 0x034A);
+			if (obj)
+			{
+				len = 4;
+				auto *str = token_obj_get_string(obj, &len);
+				if (str) {
+					DBGLOG("sdell", "high = %s", str);
+				}
+			}
+		}
+		
+		obj = token_table_get_next_by_id(token_table, nullptr, 0x0346);
+		if (token_obj_is_active(obj))
+			DBGLOG("sdell", "STANDARD charging mode is selected");
+		
+		obj = token_table_get_next_by_id(token_table, nullptr, 0x0347);
+		if (token_obj_is_active(obj))
+			DBGLOG("sdell", "EXPRESS charging mode is selected");
+		
+		// activate standard mode:
+		obj = token_table_get_next_by_id(token_table, nullptr, 0x0346);
+		if (obj != nullptr)
+		{
+			DBGLOG("sdell", "try to change charging mode to STANDARD");
+			if (token_obj_activate(obj) == 0) {
+				DBGLOG("sdell", "charging mode is changed to STANDARD");
+			}
+		}
+		
+		obj = token_table_get_next_by_id(token_table, nullptr, 0x0346);
+		if (token_obj_is_active(obj))
+			DBGLOG("sdell", "STANDARD charging mode is selected now");
+	}*/
 
 	return this;
 }
